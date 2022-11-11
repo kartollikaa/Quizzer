@@ -1,7 +1,7 @@
 package com.kartollika.quizzer.domain.repository
 
-import com.kartollika.quizzer.domain.model.Quest
+import com.kartollika.quizzer.domain.model.Quiz
 
 interface QuestDraftRepository {
-  suspend fun saveDraft(quest: Quest)
+  suspend fun saveDraft(quest: Quiz)
 }

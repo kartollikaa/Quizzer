@@ -8,6 +8,7 @@
       android:fullBackupContent="@xml/backup_rules"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
+      android:name=".QuizzerApp"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
       android:theme="@style/Theme.Quizzer"
@@ -26,7 +27,21 @@
       <meta-data
           android:name="android.app.lib_name"
           android:value="" />
+
+      <intent-filter
+          android:icon="@mipmap/ic_launcher"
+          android:label="@string/app_name">
+        <action android:name="android.intent.action.VIEW" />
+        <action android:name="android.intent.action.EDIT" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <!-- change custom file extension -->
+        <data android:mimeType="*/*" />
+        <data android:host="*" />
+        <data android:pathPattern=".*\\.quiz" />
+      </intent-filter>
     </activity>
+
   </application>
 
 </manifest>

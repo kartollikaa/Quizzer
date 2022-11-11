@@ -2,9 +2,9 @@ package com.kartollika.quizzer.data.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.kartollika.quizzer.data.adapters.StepTypeDeserializer
-import com.kartollika.quizzer.data.adapters.StepTypeSerializer
-import com.kartollika.quizzer.domain.model.StepType
+import com.kartollika.quizzer.data.adapters.PossibleAnswerDeserializer
+import com.kartollika.quizzer.data.adapters.PossibleAnswerSerializer
+import com.kartollika.quizzer.domain.model.PossibleAnswer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,8 +19,8 @@ class GsonModule {
   @Singleton
   fun provideGson(): Gson {
     return GsonBuilder()
-      .registerTypeAdapter(StepType::class.java, StepTypeSerializer())
-      .registerTypeAdapter(StepType::class.java, StepTypeDeserializer())
+      .registerTypeAdapter(PossibleAnswer::class.java, PossibleAnswerSerializer())
+      .registerTypeAdapter(PossibleAnswer::class.java, PossibleAnswerDeserializer())
       .create()
   }
 }

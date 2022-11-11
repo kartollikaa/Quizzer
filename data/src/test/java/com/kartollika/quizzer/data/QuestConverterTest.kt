@@ -2,14 +2,14 @@ package com.kartollika.quizzer.data
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.kartollika.quizzer.data.adapters.StepTypeDeserializer
-import com.kartollika.quizzer.data.adapters.StepTypeSerializer
-import com.kartollika.quizzer.domain.model.Choice
-import com.kartollika.quizzer.domain.model.Choice.Option
-import com.kartollika.quizzer.domain.model.Quest
-import com.kartollika.quizzer.domain.model.Step
-import com.kartollika.quizzer.domain.model.StepType
-import org.junit.Assert.*
+import com.kartollika.quizzer.data.adapters.PossibleAnswerDeserializer
+import com.kartollika.quizzer.data.adapters.PossibleAnswerSerializer
+import com.kartollika.quizzer.domain.model.PossibleAnswer
+import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
+import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
+import com.kartollika.quizzer.domain.model.Question
+import com.kartollika.quizzer.domain.model.Quiz
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -19,56 +19,77 @@ class QuestConverterTest {
 
   @Before fun setup() {
     gson = GsonBuilder()
-      .registerTypeAdapter(StepType::class.java, StepTypeSerializer())
-      .registerTypeAdapter(StepType::class.java, StepTypeDeserializer())
+      .registerTypeAdapter(PossibleAnswer::class.java, PossibleAnswerSerializer())
+      .registerTypeAdapter(PossibleAnswer::class.java, PossibleAnswerDeserializer())
       .create()
   }
 
   @Test
   fun Quest_One_Step_To_Gson() {
-    val option1 = Option("1")
-    val option2 = Option("2")
-    val quest = Quest(
-      listOf(
-        Step(
-          Choice(
-            "123",
-            listOf(option1, option2),
-            listOf(option1)
+    val quest = Quiz(
+      title = "My Quiz",
+      questions = listOf(
+        Question(
+          id = 1,
+          questionText = "Say my name",
+          answer = SingleChoice(
+            listOf(
+              "Ukka",
+              "Heisenberg",
+              "Kirill"
+            )
+          )
+        ),
+        Question(
+          id = 2,
+          questionText = "Type my name",
+          answer = Input(
+            hints = listOf(
+              "I am the one who knocks",
+              "I killed Gustavo Fling",
+            )
           )
         )
       )
     )
-    val questJson = gson.toJson(quest)
 
-    val expected = """
-      {"steps":[{"type":{"description":"123","options":[{"text":"1"},{"text":"2"}],"correctOptions":[{"text":"1"}],"name":"choice"}}]}
-      """.trimIndent()
+    val questJson = gson.toJson(quest)
+    println(questJson)
+
+    val expected = QUEST
     assertEquals(expected, questJson)
   }
 
   @Test
   fun Quest_Json_To_Model() {
-    val questJson = """
-      {"steps":[{"type":{"description":"123","options":[{"text":"1"},{"text":"2"}],"correctOptions":[{"text":"1"}],"name":"choice"}}]}
-      """.trimIndent()
+    val questJson = QUEST
 
-    val quest = gson.fromJson(questJson, Quest::class.java)
+    val quest = gson.fromJson(questJson, Quiz::class.java)
 
-    val option1 = Option("1")
-    val option2 = Option("2")
-    val expected = Quest(
-      listOf(
-        Step(
-          Choice(
-            "123",
-            listOf(option1, option2),
-            listOf(option1)
+    val expected = Quiz(
+      title = "My Quiz",
+      questions = listOf(
+        Question(
+          id = 1,
+          questionText = "Say my name",
+          answer = SingleChoice(
+            listOf(
+              "Ukka",
+              "Heisenberg",
+              "Kirill"
+            )
           )
         )
       )
     )
 
     assertEquals(expected, quest)
+  }
+
+  companion object {
+    private val QUEST = """
+      {"title":"My Quiz","questions":[{"id":1,"questionText":"Say my name","answer":{"options":["Ukka","Heisenberg","Kirill"],"name":"single_choice"}}]}
+      """
+      .trimIndent()
   }
 }

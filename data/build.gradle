@@ -1,13 +1,13 @@
 plugins {
-  id 'com.android.application'
+  id "com.android.library"
   id 'org.jetbrains.kotlin.android'
   id 'kotlin-kapt'
   id 'com.google.dagger.hilt.android'
 }
 
 android {
-  namespace 'com.kartollika.quizzer.editor'
-  compileSdk 32
+  namespace 'com.kartollika.quizzer.data'
+  compileSdk 33
 
   defaultConfig {
     minSdk 23

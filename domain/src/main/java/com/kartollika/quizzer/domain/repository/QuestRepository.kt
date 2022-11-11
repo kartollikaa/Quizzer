@@ -1,8 +1,8 @@
 package com.kartollika.quizzer.domain.repository
 
-import com.kartollika.quizzer.domain.model.Quest
+import com.kartollika.quizzer.domain.model.Quiz
 import java.io.File
 
 interface QuestRepository {
-  fun generateQuest(quest: Quest): File
+  fun generateQuest(quest: Quiz): File
 }
