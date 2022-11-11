@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,8 +19,10 @@ import com.kartollika.quizzer.domain.model.Answer
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
 import com.kartollika.quizzer.domain.model.PossibleAnswer.MultipleChoice
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
+import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides
 import com.kartollika.quizzer.player.questions.InputQuestion
 import com.kartollika.quizzer.player.questions.SingleChoiceQuestion
+import com.kartollika.quizzer.player.questions.SlidesQuestion
 
 @Composable
 fun QuestionContent(
@@ -47,16 +50,24 @@ fun QuestionContent(
             questionState = questionState,
             possibleAnswer = possibleAnswer,
             answer = answer as Answer.SingleChoice?,
-            onAnswerSelected = { answer -> onAnswer(Answer.SingleChoice(answer)) },
-            modifier = Modifier.fillParentMaxWidth()
+            onAnswerSelected = { answer -> onAnswer(Answer.SingleChoice(answer, questionId = questionState.question.id)) },
+            modifier = Modifier.fillParentMaxWidth(),
           )
         }
         is Input -> {
           InputQuestion(
+            questionState = questionState,
             possibleAnswer = possibleAnswer,
             answer = answer as Answer.Input?,
-            onAnswerTyped = { answer -> onAnswer(Answer.Input(answer)) },
+            onAnswerTyped = { answer -> onAnswer(Answer.Input(answer, questionId = questionState.question.id)) },
             modifier = Modifier.fillParentMaxWidth()
+          )
+        }
+        is Slides -> {
+          SlidesQuestion(
+            questionState = questionState,
+            possibleAnswer = possibleAnswer,
+            modifier = Modifier.fillMaxSize()
           )
         }
       }

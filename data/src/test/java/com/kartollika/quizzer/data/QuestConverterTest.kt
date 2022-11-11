@@ -7,6 +7,8 @@ import com.kartollika.quizzer.data.adapters.PossibleAnswerSerializer
 import com.kartollika.quizzer.domain.model.PossibleAnswer
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
+import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides
+import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides.Slide
 import com.kartollika.quizzer.domain.model.Question
 import com.kartollika.quizzer.domain.model.Quiz
 import org.junit.Assert.assertEquals
@@ -37,7 +39,8 @@ class QuestConverterTest {
               "Ukka",
               "Heisenberg",
               "Kirill"
-            )
+            ),
+            correctOption = "Heisenberg"
           )
         ),
         Question(
@@ -47,6 +50,17 @@ class QuestConverterTest {
             hints = listOf(
               "I am the one who knocks",
               "I killed Gustavo Fling",
+            ),
+            answer = "Heisenberg"
+          )
+        ),
+        Question(
+          id = 3,
+          questionText = "Now you see the meth",
+          answer = Slides(
+            slides = listOf(
+              Slide("Pure clean", listOf("1", "1")),
+              Slide("99% pure", listOf("1", "1", "1")),
             )
           )
         )
@@ -77,6 +91,28 @@ class QuestConverterTest {
               "Ukka",
               "Heisenberg",
               "Kirill"
+            ),
+            correctOption = "Heisenberg"
+          )
+        ),
+        Question(
+          id = 2,
+          questionText = "Type my name",
+          answer = Input(
+            hints = listOf(
+              "I am the one who knocks",
+              "I killed Gustavo Fling",
+            ),
+            answer = "Heisenberg"
+          )
+        ),
+        Question(
+          id = 3,
+          questionText = "Now you see the meth",
+          answer = Slides(
+            slides = listOf(
+              Slide("Pure clean", listOf("1", "1")),
+              Slide("99% pure", listOf("1", "1", "1")),
             )
           )
         )

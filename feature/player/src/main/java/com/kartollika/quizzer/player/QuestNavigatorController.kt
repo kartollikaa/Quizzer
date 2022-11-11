@@ -21,7 +21,8 @@ fun QuestNavigatorController(
   state: QuestionState,
   onPrevious: () -> Unit = {},
   checkAnswer: () -> Unit = {},
-  onForward: () -> Unit = {}
+  onForward: () -> Unit = {},
+  onDone: () -> Unit = {}
 ) {
   Row(
     modifier = Modifier.fillMaxWidth(),
@@ -34,17 +35,32 @@ fun QuestNavigatorController(
       Text(text = "Назад")
     }
 
-    if (!state.checked) {
-      TextButton(onClick = checkAnswer) {
-        Text(text = "Проверить")
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Проверить")
+    when {
+      !state.checked -> {
+        TextButton(
+          onClick = checkAnswer,
+          enabled = state.enableCheck
+        ) {
+          Text(text = "Проверить")
+          Spacer(modifier = Modifier.width(8.dp))
+          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Проверить")
+        }
       }
-    } else {
-      TextButton(onClick = onForward) {
-        Text(text = "Вперед")
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Вперед")
+
+      state.showDone -> {
+        TextButton(onClick = onDone) {
+          Text(text = "Готово")
+          Spacer(modifier = Modifier.width(8.dp))
+          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Готово")
+        }
+      }
+
+      else -> {
+        TextButton(onClick = onForward) {
+          Text(text = "Вперед")
+          Spacer(modifier = Modifier.width(8.dp))
+          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Вперед")
+        }
       }
     }
   }

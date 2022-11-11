@@ -14,8 +14,6 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,19 +28,18 @@ fun SingleChoiceQuestion(
   possibleAnswer: SingleChoice,
   answer: Answer.SingleChoice?,
   onAnswerSelected: (String) -> Unit,
-  modifier: Modifier
+  modifier: Modifier,
 ) {
   val options = possibleAnswer.options
   val selected = answer?.answer
-  val (selectedOption, onOptionSelected) = remember(answer) { mutableStateOf(selected) }
+  questionState.enableCheck = answer != null
 
   Column(modifier = modifier) {
     options.forEach { option ->
       val onClickHandle = {
-        onOptionSelected(option)
         onAnswerSelected(option)
       }
-      val optionSelected = option == selectedOption
+      val optionSelected = option == selected
 
       val answerBorderColor = if (optionSelected) {
         MaterialTheme.colors.primary.copy(alpha = 0.5f)

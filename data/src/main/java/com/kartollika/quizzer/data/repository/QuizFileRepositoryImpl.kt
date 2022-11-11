@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.google.gson.Gson
 import com.kartollika.quizzer.domain.model.Quiz
-import com.kartollika.quizzer.domain.repository.QuestFileRepository
+import com.kartollika.quizzer.domain.repository.QuizFileRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,10 +12,10 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
-class QuestFileRepositoryImpl @Inject constructor(
+class QuizFileRepositoryImpl @Inject constructor(
   @ApplicationContext private val context: Context,
   private val gson: Gson
-): QuestFileRepository {
+): QuizFileRepository {
 
   override fun readFile(file: String): Flow<Quiz> = flow {
     val fileUri = Uri.parse(file)

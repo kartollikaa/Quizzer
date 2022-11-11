@@ -70,4 +70,5 @@ dependencies {
   implementation project(":feature:editor")
   implementation project(":feature:player")
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+  implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
 }

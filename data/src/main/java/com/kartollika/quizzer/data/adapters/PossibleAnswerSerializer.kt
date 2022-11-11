@@ -7,6 +7,7 @@ import com.kartollika.quizzer.domain.model.PossibleAnswer
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
 import com.kartollika.quizzer.domain.model.PossibleAnswer.MultipleChoice
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
+import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides
 import java.lang.reflect.Type
 
 class PossibleAnswerSerializer: JsonSerializer<PossibleAnswer> {
@@ -19,6 +20,7 @@ class PossibleAnswerSerializer: JsonSerializer<PossibleAnswer> {
       is SingleChoice -> context.serialize(src, SingleChoice::class.java)
       is MultipleChoice -> context.serialize(src, MultipleChoice::class.java)
       is Input -> context.serialize(src, Input::class.java)
+      is Slides -> context.serialize(src, Slides::class.java)
     }
   }
 }

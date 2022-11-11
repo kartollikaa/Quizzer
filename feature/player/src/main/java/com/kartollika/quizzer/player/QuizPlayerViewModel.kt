@@ -3,10 +3,13 @@ package com.kartollika.quizzer.player
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kartollika.quizzer.domain.repository.QuestFileRepository
+import com.kartollika.quizzer.domain.repository.CurrentQuizRepository
+import com.kartollika.quizzer.domain.repository.QuizFileRepository
 import com.kartollika.quizzer.player.QuizState.Error
 import com.kartollika.quizzer.player.QuizState.Loading
+import com.kartollika.quizzer.player.QuizState.Questions
 import com.kartollika.quizzer.player.navigation.quizFileUriArg
+import com.kartollika.quizzer.player.vo.QuestionMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QuizPlayerViewModel @Inject constructor(
-  savedStateHandle: SavedStateHandle, private val questFileRepository: QuestFileRepository
+  savedStateHandle: SavedStateHandle,
+  private val questFileRepository: QuizFileRepository,
+  private val mapper: QuestionMapper,
+  private val currentQuizRepository: CurrentQuizRepository
 ) : ViewModel() {
 
   private val _uiState: MutableStateFlow<QuizState> = MutableStateFlow(Loading)
@@ -29,7 +35,7 @@ class QuizPlayerViewModel @Inject constructor(
     questFileRepository.readFile(filePath)
       .catch { _uiState.tryEmit(Error(it.message ?: "Unexpected error")) }
       .onEach { quiz ->
-        val quizState = QuizState.Questions(
+        val quizState = Questions(
           quizTitle = quiz.title,
           questionsState = quiz.questions.mapIndexed { index, question ->
             QuestionState(
@@ -41,16 +47,15 @@ class QuizPlayerViewModel @Inject constructor(
             )
           }
         )
+        currentQuizRepository.setCurrentQuiz(quiz)
         _uiState.tryEmit(quizState)
       }
       .launchIn(viewModelScope)
   }
 
-  fun checkAnswer(index: Int) {
-//    val questState = uiState.value as QuestState
-//    val progress = questState.progress.toMutableMap()
-//    progress[step] = answer
-//
-//    _uiState.tryEmit(questState.copy(progress = progress as LinkedHashMap<Step, Answer?>))
+  fun computeResult(questions: Questions) {
+    val answers = questions.questionsState.mapNotNull { it.answer }
+    val result = currentQuizRepository.getQuizResults(answers)
+    _uiState.value = QuizState.Result(questions.quizTitle, result)
   }
 }

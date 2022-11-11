@@ -5,7 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.kartollika.quizzer.domain.model.Answer
+import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides
 import com.kartollika.quizzer.domain.model.Question
+import com.kartollika.quizzer.domain.model.QuizResult
 
 @Stable
 data class QuestionState(
@@ -15,9 +17,10 @@ data class QuestionState(
   val showPrevious: Boolean,
   val showDone: Boolean
 ) {
+  var enableCheck by mutableStateOf(true)
   var enableNext by mutableStateOf(false)
   var answer by mutableStateOf<Answer<*>?>(null)
-  var checked by mutableStateOf(false)
+  var checked by mutableStateOf(question.answer is Slides)
 }
 
 sealed class QuizState {
@@ -31,4 +34,9 @@ sealed class QuizState {
   ): QuizState() {
     var currentQuestionIndex by mutableStateOf(0)
   }
+
+  data class Result(
+    val quizTitle: String,
+    val quizResult: QuizResult
+  ): QuizState()
 }
