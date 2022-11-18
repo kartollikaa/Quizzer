@@ -1,5 +1,6 @@
 package com.kartollika.quizzer.editor.questions
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,11 +12,13 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kartollika.quizzer.editor.CircleBadge
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.SingleChoice
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.SingleChoice.OptionVO
 
@@ -24,6 +27,8 @@ internal fun SingleChoiceQuestion(
   questionId: Int,
   answer: SingleChoice,
   onOptionAdded: (Int) -> Unit,
+  onOptionDeleted: (Int) -> Unit,
+  startLinking: (Int, Int) -> Unit
 ) {
   Column(
     modifier = Modifier.fillMaxWidth(),
@@ -31,8 +36,11 @@ internal fun SingleChoiceQuestion(
   ) {
     answer.options.forEachIndexed { index, option ->
       SingleChoiceOption(
+        questionId,
         answer,
         option,
+        onOptionDeleted,
+        startLinking
       )
     }
 
@@ -51,8 +59,11 @@ internal fun SingleChoiceQuestion(
 
 @Composable
 private fun SingleChoiceOption(
+  questionId: Int,
   answer: SingleChoice,
   option: OptionVO,
+  deleteOption: (Int) -> Unit,
+  startLinking: (Int, Int) -> Unit
 ) {
   Row(modifier = Modifier.fillMaxWidth()) {
     RadioButton(
@@ -70,12 +81,22 @@ private fun SingleChoiceOption(
       },
       modifier = Modifier.weight(1f),
       trailingIcon = {
-        IconButton(onClick = { /*TODO*/ }) {
-          Icon(
-            imageVector = Icons.Default.Link, contentDescription = "Связать"
-          )
+        val onClick = { startLinking(questionId, option.id) }
+
+        if (option.linkedQuestionId != null) {
+          CircleBadge(option.linkedQuestionId!!, modifier = Modifier.clickable { onClick() })
+        } else {
+          IconButton(onClick = onClick) {
+            Icon(
+              imageVector = Icons.Default.Link, contentDescription = "Связать"
+            )
+          }
         }
       }
     )
+
+    IconButton(onClick = { deleteOption(option.id) }) {
+      Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+    }
   }
 }

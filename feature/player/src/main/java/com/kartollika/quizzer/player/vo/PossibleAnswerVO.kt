@@ -12,7 +12,7 @@ sealed class PossibleAnswerVO {
 
   data class SingleChoice(
     val options: List<OptionVO>,
-    val correctOption: Int
+    val correctOption: Int,
   ) :
     PossibleAnswerVO() {
     data class OptionVO(

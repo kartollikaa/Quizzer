@@ -31,7 +31,7 @@ internal fun SingleChoiceQuestion(
   modifier: Modifier,
 ) {
   val options = possibleAnswer.options
-  val selected = answer?.answer
+  val selected = answer?.optionId
   questionState.enableCheck = answer != null
 
   Column(modifier = modifier) {

@@ -1,23 +1,48 @@
 package com.kartollika.quizzer.editor.questions
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Input
 
 @Composable
 internal fun InputQuestion(
   answer: Input,
-  onPutAnswer: (String) -> Unit
+  onPutAnswer: (String) -> Unit,
+  onPutHint: (String, Int) -> Unit
 ) {
-  OutlinedTextField(
-    value = answer.answer,
-    onValueChange = onPutAnswer,
-    modifier = Modifier.fillMaxWidth(),
-    label = {
-      Text(text = "Правильный ответ")
-    }
-  )
+
+  Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    OutlinedTextField(
+      value = answer.answer,
+      onValueChange = onPutAnswer,
+      modifier = Modifier.fillMaxWidth(),
+      label = {
+        Text(text = "Правильный ответ")
+      }
+    )
+
+    OutlinedTextField(
+      value = answer.hints[0],
+      onValueChange = { onPutHint(it, 0) },
+      modifier = Modifier.fillMaxWidth(),
+      label = {
+        Text(text = "Подсказка 1")
+      }
+    )
+
+    OutlinedTextField(
+      value = answer.hints[1],
+      onValueChange = { onPutHint(it, 1) },
+      modifier = Modifier.fillMaxWidth(),
+      label = {
+        Text(text = "Подсказка 2")
+      }
+    )
+  }
 }

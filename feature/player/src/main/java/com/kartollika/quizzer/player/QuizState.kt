@@ -33,6 +33,7 @@ internal sealed class QuizState {
     val questionsState: List<QuestionState>
   ): QuizState() {
     var currentQuestionIndex by mutableStateOf(0)
+    var goBack by mutableStateOf(false)
   }
 
   data class Result(

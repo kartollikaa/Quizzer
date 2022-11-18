@@ -12,13 +12,16 @@ import java.io.File
 @Composable fun QuizEditorRoute(
   modifier: Modifier = Modifier,
   viewModel: QuizEditorViewModel = hiltViewModel(),
-  shareFile: (File) -> Unit
+  shareFile: (File) -> Unit,
+  navigateToMap: (Int) -> Unit,
+  goBack: () -> Unit
 ) {
   val state by viewModel.uiState.collectAsState()
 
   LaunchedEffect(state.fileToShare) {
     if (state.fileToShare == null) return@LaunchedEffect
     shareFile(state.fileToShare!!)
+    state.fileToShare = null
   }
 
   val quizEditorCallbacks = EditorCallbacks(
@@ -27,7 +30,14 @@ import java.io.File
     onQuestionDelete = viewModel::onQuestionDelete,
     onQuestionTypeSelected = viewModel::onQuestionTypeSelected,
     onAddSlide = viewModel::addSlide,
-    onAddPictureOnSlide = viewModel::onAddPictureOnSlide
+    onAddPictureOnSlide = viewModel::onAddPictureOnSlide,
+    onAddLocation = viewModel::addLocation,
+    onLocationSet = navigateToMap,
+    onOptionDeleted = viewModel::deleteOption,
+    startLinking = viewModel::startLinking,
+    endLinking = viewModel::endLinking,
+    cancelLinking = viewModel::cancelLinking,
+    deleteSlide = viewModel::deleteSlide
   )
 
   CompositionLocalProvider(LocalEditorCallbacks provides quizEditorCallbacks) {
@@ -36,6 +46,7 @@ import java.io.File
       state = state,
       addNewQuestion = viewModel::addNewQuestion,
       generateQuiz = viewModel::generateQuiz,
+      goBack = goBack
     )
   }
 }

@@ -3,11 +3,13 @@ package com.kartollika.quizzer.player
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kartollika.quizzer.domain.model.Answer.SingleChoice
 import com.kartollika.quizzer.domain.repository.CurrentQuizRepository
 import com.kartollika.quizzer.player.QuizState.Error
 import com.kartollika.quizzer.player.QuizState.Loading
 import com.kartollika.quizzer.player.QuizState.Questions
 import com.kartollika.quizzer.player.navigation.quizFileUriArg
+import com.kartollika.quizzer.player.vo.PossibleAnswerVO
 import com.kartollika.quizzer.player.vo.QuestionMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +33,9 @@ class QuizPlayerViewModel @Inject constructor(
 
   private val filePath: String = checkNotNull(savedStateHandle[quizFileUriArg])
 
+  private var questionsHistory: MutableList<Int> = mutableListOf(0)
+  private var historyIndex = 0
+
   init {
     currentQuizRepository.openQuiz(filePath)
       .catch { _uiState.tryEmit(Error(it.message ?: "Unexpected error")) }
@@ -47,10 +52,45 @@ class QuizPlayerViewModel @Inject constructor(
             )
           }
         )
+
         _uiState.tryEmit(quizState)
       }
       .flowOn(Dispatchers.IO)
       .launchIn(viewModelScope)
+  }
+
+  fun showPrevious() {
+    val quizState = (uiState.value as Questions)
+    if (historyIndex == 0) {
+      (uiState.value as Questions).goBack = true
+      return
+    }
+    quizState.currentQuestionIndex = questionsHistory[--historyIndex]
+  }
+
+  fun showNext() {
+    val quizState = (uiState.value as Questions)
+
+    if (historyIndex < questionsHistory.lastIndex) {
+      quizState.currentQuestionIndex = questionsHistory[++historyIndex]
+      return
+    }
+
+    val questionState = quizState.questionsState[quizState.currentQuestionIndex]
+    val possibleAnswerVO = questionState.question.answer
+    val nextIndex = if (possibleAnswerVO is PossibleAnswerVO.SingleChoice) {
+      val answer = questionState.answer as SingleChoice
+      val option = possibleAnswerVO.options.find { it.id == answer.optionId }!!
+
+      option.linkedQuestionId ?: (quizState.currentQuestionIndex + 1)
+    } else {
+      quizState.currentQuestionIndex + 1
+    }
+
+    quizState.currentQuestionIndex = nextIndex
+
+    historyIndex++
+    questionsHistory.add(nextIndex)
   }
 
   internal fun computeResult(questions: Questions) {

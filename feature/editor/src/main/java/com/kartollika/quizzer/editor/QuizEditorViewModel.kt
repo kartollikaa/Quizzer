@@ -4,12 +4,11 @@ import android.net.Uri
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kartollika.quizzer.domain.model.Question
-import com.kartollika.quizzer.domain.model.Quiz
 import com.kartollika.quizzer.domain.repository.QuestDraftRepository
 import com.kartollika.quizzer.domain.repository.QuizEditorRepository
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType.Input
+import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType.Location
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType.SingleChoice
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType.Slides
 import com.kartollika.quizzer.editor.bitmap.BitmapDecoder
@@ -20,11 +19,17 @@ import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
 import com.kartollika.quizzer.editor.vo.QuestionEditorMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,44 +44,38 @@ class QuizEditorViewModel @Inject constructor(
   private val _uiState: MutableStateFlow<QuizEditorState> = MutableStateFlow(QuizEditorState())
   internal val uiState = _uiState.asStateFlow()
 
-  fun setQuizTitle(title: String) {
-    _uiState.update {
-      it.copy(quizTitle = title)
-    }
-  }
+  private val _toastMessage = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 1)
+  val toastMessage = _toastMessage.asSharedFlow()
 
   fun addNewQuestion() {
-    val id = quizEditorRepository.getNextId()
+    val id = quizEditorRepository.getNextQuestionId()
     _uiState.value.questions = uiState.value.questions + QuestionState(id = id)
   }
 
   fun generateQuiz() {
     uiState.value.quizGenerating = true
 
-    viewModelScope.launch(Dispatchers.IO) {
-      val state = uiState.value
+    val state = uiState.value
 
-      val quiz = Quiz(
-        title = state.quizTitle,
-        questions = state.questions.map {
-          Question(it.id, it.questionText, questionMapper.answerToModel(it.answer))
-        }
-      )
-
-      quizEditorRepository.generateQuiz(quiz)
-        .onEach { file -> _uiState.value.fileToShare = file }
-        .collect()
-    }
+    flowOf(state)
+      .map { questionMapper.quizStateToModel(state) }
+      .flatMapLatest { quizEditorRepository.generateQuiz(it) }
+      .flowOn(Dispatchers.Default)
+      .onEach { file -> _uiState.value.fileToShare = file }
+      .flowOn(Dispatchers.IO)
+      .catch { exception -> exception.message?.let { message -> _toastMessage.tryEmit(message) } }
+      .launchIn(viewModelScope)
   }
 
   fun onQuestionTypeSelected(questionId: Int, questionType: QuestionType) {
     val question = getQuestionById(questionId) ?: return
     question.answer = when (questionType) {
-      Slides -> PossibleAnswerVO.Slides()
+      Slides -> PossibleAnswerVO.Slides(Slide(getNextId()))
       Input -> PossibleAnswerVO.Input()
       SingleChoice -> {
-        PossibleAnswerVO.SingleChoice(OptionVO(id = quizEditorRepository.getNextId()))
+        PossibleAnswerVO.SingleChoice(OptionVO(id = getNextId()))
       }
+      Location -> PossibleAnswerVO.Place()
     }
   }
 
@@ -91,13 +90,20 @@ class QuizEditorViewModel @Inject constructor(
 
   fun addOption(questionId: Int) {
     val singleChoice = getQuestionById(questionId)?.answer as PossibleAnswerVO.SingleChoice
-    (singleChoice).options = singleChoice.options + OptionVO(id = quizEditorRepository.getNextId())
+    (singleChoice).options = singleChoice.options + OptionVO(id = getNextId())
   }
 
   fun addSlide(questionId: Int) {
     val slides = getQuestionById(questionId)?.answer as PossibleAnswerVO.Slides
     slides.slides = slides.slides.toMutableList().apply {
-      add(Slide())
+      add(Slide(getNextId()))
+    }
+  }
+
+  fun deleteSlide(questionId: Int, slideId: Int) {
+    val slides = getQuestionById(questionId)?.answer as PossibleAnswerVO.Slides
+    slides.slides = slides.slides.toMutableList().apply {
+      removeAll { it.id == slideId }
     }
   }
 
@@ -110,14 +116,50 @@ class QuizEditorViewModel @Inject constructor(
     }
   }
 
+  fun addLocation(questionId: Int) {
+
+  }
+
+  fun deleteOption(questionId: Int, optionId: Int) {
+    val singleChoice = getQuestionById(questionId)?.answer as PossibleAnswerVO.SingleChoice
+    singleChoice.options = singleChoice.options.toMutableList().apply {
+      removeAll { it.id == optionId }
+    }
+  }
+
+  fun endLinking(questionId: Int) {
+    val startLinking = uiState.value.isLinkingQuestions ?: return
+
+    val singleChoice =
+      getQuestionById(startLinking.questionId)?.answer as PossibleAnswerVO.SingleChoice
+    singleChoice.options.find { it.id == startLinking.optionId }?.linkedQuestionId = questionId
+    uiState.value.isLinkingQuestions = null
+  }
+
+  fun cancelLinking() {
+    uiState.value.isLinkingQuestions = null
+  }
+
+  fun startLinking(questionId: Int, optionId: Int) {
+    uiState.value.isLinkingQuestions = LinkingStart(questionId, optionId)
+  }
+
   private fun getQuestionById(questionId: Int) =
     _uiState.value.questions.find { it.id == questionId }
+
+  private fun getNextId() = quizEditorRepository.getNextId()
 
   enum class QuestionType {
     Slides,
     Input,
-    SingleChoice
+    SingleChoice,
+    Location
   }
+
+  data class LinkingStart(
+    val questionId: Int,
+    val optionId: Int
+  )
 }
 
 val LocalEditorCallbacks = compositionLocalOf { EditorCallbacks() }
@@ -128,5 +170,12 @@ data class EditorCallbacks(
   val onQuestionDelete: (Int) -> Unit = {},
   val onQuestionTypeSelected: (Int, QuestionType) -> Unit = { _, _ -> },
   val onAddSlide: (Int) -> Unit = {},
-  val onAddPictureOnSlide: (Slide, Uri) -> Unit = { _, _ -> }
+  val onAddPictureOnSlide: (Slide, Uri) -> Unit = { _, _ -> },
+  val onAddLocation: (Int) -> Unit = {},
+  val onLocationSet: (Int) -> Unit = {},
+  val onOptionDeleted: (Int, Int) -> Unit = { _, _ -> },
+  val startLinking: (Int, Int) -> Unit = { _, _ -> },
+  val endLinking: (Int) -> Unit = { },
+  val cancelLinking: () -> Unit = {},
+  val deleteSlide: (Int, Int) -> Unit = { _, _ -> }
 )

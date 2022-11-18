@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
       LaunchedEffect(key1 = Unit) {
         if (intent.data != null) {
           navController.navigateToQuizPlayer(intent.data.toString())
+          intent.data = null
         }
       }
     }

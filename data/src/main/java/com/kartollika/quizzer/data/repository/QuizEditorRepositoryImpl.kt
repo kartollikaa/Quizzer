@@ -13,8 +13,11 @@ class QuizEditorRepositoryImpl @Inject constructor(
 ) : QuizEditorRepository {
 
   private var lastId = 0
+  private var lastQuestionId = 0
 
   override fun getNextId(): Int = lastId++
+
+  override fun getNextQuestionId(): Int = lastQuestionId++
 
   override fun generateQuiz(quiz: Quiz): Flow<File> = flow {
     emit(quizFileDataSource.writeToFile(quiz))

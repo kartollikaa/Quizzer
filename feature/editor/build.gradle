@@ -55,6 +55,11 @@ dependencies {
   implementation "com.google.dagger:hilt-android:2.44"
   kapt "com.google.dagger:hilt-compiler:2.44"
   implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+  implementation 'com.google.android.gms:play-services-location:17.0.0'
+  implementation 'com.google.android.gms:play-services-maps:17.0.0'
+  implementation "com.google.accompanist:accompanist-flowlayout:0.27.1"
+  implementation "com.google.maps.android:maps-compose:2.5.3"
+  implementation "com.google.android.gms:play-services-maps:18.1.0"
 
   implementation project(":domain")
 }

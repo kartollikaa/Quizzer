@@ -1,6 +1,7 @@
 package com.kartollika.quizzer.player
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ internal fun QuestionContent(
 ) {
   LazyColumn(
     modifier = modifier,
+    contentPadding = PaddingValues(16.dp)
   ) {
     val possibleAnswer = questionState.question.answer
 

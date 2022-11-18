@@ -30,7 +30,7 @@ class CurrentQuizRepositoryImpl @Inject constructor(
     quiz ?: error("No quiz is in progress")
     var correctAnswers = 0
     val possibleAnswers = quiz.questions.filter { it.answer is Answerable }
-    val totalQuestions = possibleAnswers.size
+    val totalQuestions = answers.size
 
     answers.forEachIndexed { index, answer: Answer<*> ->
       val possibleAnswer = possibleAnswers.find { it.id == answer.questionId }
@@ -43,7 +43,7 @@ class CurrentQuizRepositoryImpl @Inject constructor(
         }
         is SingleChoice -> {
           answer as Answer.SingleChoice
-          correctAnswers += (answer.answer == correctAnswer.correctOption).toInt()
+          correctAnswers += (answer.optionId == correctAnswer.correctOption).toInt()
         }
         else -> {}
       }

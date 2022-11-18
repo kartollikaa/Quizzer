@@ -5,7 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.kartollika.quizzer.editor.navigation.navigateToQuizEditor
-import com.kartollika.quizzer.editor.navigation.quizEditorScreen
+import com.kartollika.quizzer.editor.navigation.navigateToQuizEditorMap
+import com.kartollika.quizzer.editor.navigation.quizEditorGraph
 import com.kartollika.quizzer.menuRoute
 import com.kartollika.quizzer.menuScreen
 import com.kartollika.quizzer.player.navigation.navigateToQuizPlayer
@@ -37,8 +38,10 @@ fun QuizzerNavHost(
       onBack = { navController.popBackStack() }
     )
 
-    quizEditorScreen(
-      shareFile = shareFile
+    quizEditorGraph(
+      shareFile = shareFile,
+      navigateToMap = { navController.navigateToQuizEditorMap(it) },
+      goBack = { navController.popBackStack() }
     )
   }
 }

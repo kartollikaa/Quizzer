@@ -4,7 +4,7 @@ interface Answerable
 
 sealed class PossibleAnswer(val name: String) {
 
-  object Empty: PossibleAnswer("empty")
+  object Empty : PossibleAnswer("empty")
 
   data class Slides(
     val slides: List<Slide> = emptyList()
@@ -24,9 +24,7 @@ sealed class PossibleAnswer(val name: String) {
       val id: Int,
       val value: String = "",
       val linkedQuestionId: Int? = null
-    ) {
-      fun isNotEmpty() = value.isNotEmpty()
-    }
+    )
   }
 
   data class Input(
@@ -38,6 +36,9 @@ sealed class PossibleAnswer(val name: String) {
     init {
       if (hints.size > 2) error("Question can't contain more than 2 hints")
     }
-
   }
+
+  data class Place(
+    val location: Location
+  ) : PossibleAnswer("place"), Answerable
 }
