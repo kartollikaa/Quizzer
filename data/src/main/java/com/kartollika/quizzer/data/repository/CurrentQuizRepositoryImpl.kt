@@ -1,22 +1,27 @@
 package com.kartollika.quizzer.data.repository
 
 import com.kartollika.quizzer.data.core.toInt
+import com.kartollika.quizzer.domain.datasource.QuizFileDataSource
 import com.kartollika.quizzer.domain.model.Answer
 import com.kartollika.quizzer.domain.model.Answerable
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
-import com.kartollika.quizzer.domain.model.PossibleAnswer.MultipleChoice
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
 import com.kartollika.quizzer.domain.model.Quiz
 import com.kartollika.quizzer.domain.model.QuizResult
 import com.kartollika.quizzer.domain.repository.CurrentQuizRepository
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class CurrentQuizRepositoryImpl @Inject constructor() : CurrentQuizRepository {
+class CurrentQuizRepositoryImpl @Inject constructor(
+  private val quizFileDataSource: QuizFileDataSource
+) : CurrentQuizRepository {
 
   private var quiz: Quiz? = null
 
-  override fun setCurrentQuiz(quiz: Quiz) {
-    this.quiz = quiz
+  override fun openQuiz(file: String) = flow {
+    val quiz = quizFileDataSource.readFile(file)
+    this@CurrentQuizRepositoryImpl.quiz = quiz
+    emit(quiz)
   }
 
   @Suppress("CAST_NEVER_SUCCEEDS")
@@ -24,9 +29,8 @@ class CurrentQuizRepositoryImpl @Inject constructor() : CurrentQuizRepository {
     val quiz = quiz
     quiz ?: error("No quiz is in progress")
     var correctAnswers = 0
-    var totalQuestions = 0
     val possibleAnswers = quiz.questions.filter { it.answer is Answerable }
-    totalQuestions = possibleAnswers.size
+    val totalQuestions = possibleAnswers.size
 
     answers.forEachIndexed { index, answer: Answer<*> ->
       val possibleAnswer = possibleAnswers.find { it.id == answer.questionId }
@@ -40,10 +44,6 @@ class CurrentQuizRepositoryImpl @Inject constructor() : CurrentQuizRepository {
         is SingleChoice -> {
           answer as Answer.SingleChoice
           correctAnswers += (answer.answer == correctAnswer.correctOption).toInt()
-        }
-        is MultipleChoice -> {
-          answer as Answer.MultipleChoice
-          correctAnswers += (answer.answers == correctAnswer.options).toInt()
         }
         else -> {}
       }

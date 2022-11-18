@@ -17,7 +17,7 @@ fun NavController.navigateToQuizPlayer(quizFileUri: String) {
   navigate(routeArg(Uri.encode(quizFileUri)))
 }
 
-fun NavGraphBuilder.quizPlayerScreen(goBack: () -> Unit) {
+fun NavGraphBuilder.quizPlayerScreen(onBack: () -> Unit) {
   composable(
     route = "$quizPlayerRoute/{$quizFileUriArg}",
     arguments = listOf(
@@ -27,7 +27,7 @@ fun NavGraphBuilder.quizPlayerScreen(goBack: () -> Unit) {
     )
   ) {
     QuizPlayerRoute(
-      goBack = goBack
+      onBack = onBack
     )
   }
 }

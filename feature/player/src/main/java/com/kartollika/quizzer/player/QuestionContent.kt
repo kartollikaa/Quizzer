@@ -1,7 +1,6 @@
 package com.kartollika.quizzer.player
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,16 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.domain.model.Answer
-import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
-import com.kartollika.quizzer.domain.model.PossibleAnswer.MultipleChoice
-import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
-import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides
 import com.kartollika.quizzer.player.questions.InputQuestion
 import com.kartollika.quizzer.player.questions.SingleChoiceQuestion
 import com.kartollika.quizzer.player.questions.SlidesQuestion
+import com.kartollika.quizzer.player.vo.PossibleAnswerVO
+import com.kartollika.quizzer.player.vo.PossibleAnswerVO.Input
+import com.kartollika.quizzer.player.vo.PossibleAnswerVO.Slides
 
 @Composable
-fun QuestionContent(
+internal fun QuestionContent(
   questionState: QuestionState,
   answer: Answer<*>?,
   onAnswer: (Answer<*>) -> Unit,
@@ -33,7 +31,6 @@ fun QuestionContent(
 ) {
   LazyColumn(
     modifier = modifier,
-    contentPadding = PaddingValues(start = 20.dp, end = 20.dp)
   ) {
     val possibleAnswer = questionState.question.answer
 
@@ -43,15 +40,13 @@ fun QuestionContent(
       Spacer(modifier = Modifier.height(24.dp))
 
       when (possibleAnswer) {
-        is MultipleChoice -> {
-        }
-        is SingleChoice -> {
+        is PossibleAnswerVO.SingleChoice -> {
           SingleChoiceQuestion(
             questionState = questionState,
             possibleAnswer = possibleAnswer,
             answer = answer as Answer.SingleChoice?,
             onAnswerSelected = { answer -> onAnswer(Answer.SingleChoice(answer, questionId = questionState.question.id)) },
-            modifier = Modifier.fillParentMaxWidth(),
+            modifier = Modifier
           )
         }
         is Input -> {
@@ -60,16 +55,16 @@ fun QuestionContent(
             possibleAnswer = possibleAnswer,
             answer = answer as Answer.Input?,
             onAnswerTyped = { answer -> onAnswer(Answer.Input(answer, questionId = questionState.question.id)) },
-            modifier = Modifier.fillParentMaxWidth()
+            modifier = Modifier
           )
         }
         is Slides -> {
           SlidesQuestion(
-            questionState = questionState,
             possibleAnswer = possibleAnswer,
             modifier = Modifier.fillMaxSize()
           )
         }
+        else -> error("Incompatible possible answer type")
       }
     }
   }

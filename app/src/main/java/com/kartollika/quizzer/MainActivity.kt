@@ -1,18 +1,23 @@
 package com.kartollika.quizzer
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -21,6 +26,7 @@ import com.kartollika.quizzer.navigation.QuizzerNavHost
 import com.kartollika.quizzer.player.navigation.navigateToQuizPlayer
 import com.kartollika.quizzer.ui.theme.QuizzerTheme
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -33,28 +39,30 @@ class MainActivity : ComponentActivity() {
     setContent {
       val navController = rememberNavController()
       QuizzerTheme {
-        QuizzerScreen(
-          navController = navController,
-          modifier = Modifier
-            .systemBarsPadding()
-            .navigationBarsPadding()
-            .imePadding()
-        )
-      }
+        Surface(modifier = Modifier.fillMaxSize()) {
+          QuizzerScreen(
+            navController = navController,
+            modifier = Modifier
+              .fillMaxSize()
+              .systemBarsPadding()
+              .navigationBarsPadding()
+              .imePadding(),
+            shareFile = this::shareFile
+          )
+        }
 
-      val systemUiController = rememberSystemUiController()
-      val useDarkIcons = !isSystemInDarkTheme()
-      DisposableEffect(systemUiController, useDarkIcons) {
-        // Update all of the system bar colors to be transparent, and use
-        // dark icons if we're in light theme
-        systemUiController.setSystemBarsColor(
-          color = Color.Transparent,
-          darkIcons = useDarkIcons
-        )
+        val systemUiController = rememberSystemUiController()
+        val useDarkIcons = !isSystemInDarkTheme()
+        val primaryColor = MaterialTheme.colors.primary
+        DisposableEffect(systemUiController, useDarkIcons) {
+          systemUiController.setStatusBarColor(
+            color = primaryColor,
+            darkIcons = false
+          )
+          systemUiController.setNavigationBarColor(color = Color.Transparent)
 
-        // setStatusBarColor() and setNavigationBarColor() also exist
-
-        onDispose {}
+          onDispose {}
+        }
       }
 
       LaunchedEffect(key1 = Unit) {
@@ -64,16 +72,33 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
+
+  private fun shareFile(file: File) {
+    val intentShareFile = Intent(Intent.ACTION_SEND)
+    val uri = FileProvider.getUriForFile(this, "$packageName.provider", file)
+    if (file.exists()) {
+      intentShareFile.type = "application/pdf"
+      intentShareFile.putExtra(Intent.EXTRA_STREAM, uri)
+      intentShareFile.putExtra(
+        Intent.EXTRA_SUBJECT,
+        "Квест для тебя"
+      )
+      intentShareFile.putExtra(Intent.EXTRA_TEXT, "Я создал крутой квест для тебя! Проходи скорее")
+      startActivity(Intent.createChooser(intentShareFile, "Share File"))
+    }
+  }
 }
 
 @Composable
 private fun QuizzerScreen(
   navController: NavHostController,
   modifier: Modifier = Modifier,
+  shareFile: (File) -> Unit = {}
 ) {
   QuizzerNavHost(
     navController = navController,
-    modifier = modifier
+    modifier = modifier,
+    shareFile = shareFile
   )
 }
 

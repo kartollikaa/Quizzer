@@ -19,15 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.domain.model.Answer
-import com.kartollika.quizzer.domain.model.PossibleAnswer
 import com.kartollika.quizzer.player.QuestionState
+import com.kartollika.quizzer.player.vo.PossibleAnswerVO.Input
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
 @Composable
-fun InputQuestion(
+internal fun InputQuestion(
   questionState: QuestionState,
-  possibleAnswer: PossibleAnswer.Input,
+  possibleAnswer: Input,
   answer: Answer.Input?,
   onAnswerTyped: (String) -> Unit,
   modifier: Modifier

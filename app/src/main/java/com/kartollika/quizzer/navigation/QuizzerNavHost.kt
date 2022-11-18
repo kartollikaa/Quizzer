@@ -4,16 +4,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.kartollika.quizzer.editor.navigation.navigateToQuizEditor
+import com.kartollika.quizzer.editor.navigation.quizEditorScreen
 import com.kartollika.quizzer.menuRoute
 import com.kartollika.quizzer.menuScreen
 import com.kartollika.quizzer.player.navigation.navigateToQuizPlayer
 import com.kartollika.quizzer.player.navigation.quizPlayerScreen
+import java.io.File
 
 @Composable
 fun QuizzerNavHost(
   navController: NavHostController,
   modifier: Modifier = Modifier,
-  startDestination: String = menuRoute
+  startDestination: String = menuRoute,
+  shareFile: (File) -> Unit
 ) {
   NavHost(
     navController = navController,
@@ -23,12 +27,18 @@ fun QuizzerNavHost(
     menuScreen(
       navigateToPlayer = { quizUri ->
         navController.navigateToQuizPlayer(quizUri)
+      },
+      navigateToEditor = {
+        navController.navigateToQuizEditor()
       }
     )
+
     quizPlayerScreen(
-      goBack = {
-        navController.popBackStack()
-      }
+      onBack = { navController.popBackStack() }
+    )
+
+    quizEditorScreen(
+      shareFile = shareFile
     )
   }
 }

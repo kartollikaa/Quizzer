@@ -2,8 +2,9 @@ package com.kartollika.quizzer.domain.repository
 
 import com.kartollika.quizzer.domain.model.Quiz
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 
-interface QuizFileRepository {
-  fun readFile(file: String): Flow<Quiz>
-  fun writeToFile(quest: Quiz): Flow<Unit>
+interface QuizEditorRepository {
+  fun getNextId(): Int
+  fun generateQuiz(quiz: Quiz): Flow<File>
 }

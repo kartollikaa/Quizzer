@@ -19,17 +19,24 @@ import androidx.navigation.compose.composable
 const val menuRoute = "menu"
 
 fun NavGraphBuilder.menuScreen(
-  navigateToPlayer: (quizUri: String) -> Unit
+  navigateToPlayer: (quizUri: String) -> Unit,
+  navigateToEditor: () -> Unit
 ) {
   composable(
     route = menuRoute
   ) {
-    MenuRoute(navigateToPlayer)
+    MenuRoute(
+      navigateToPlayer = navigateToPlayer,
+      navigateToEditor = navigateToEditor
+    )
   }
 }
 
 @Composable
-fun MenuRoute(navigateToPlayer: (quizUri: String) -> Unit) {
+fun MenuRoute(
+  navigateToPlayer: (quizUri: String) -> Unit,
+  navigateToEditor: () -> Unit
+) {
   val launcher = rememberLauncherForActivityResult(
     OpenDocument()
   ) { uri: Uri? ->
@@ -57,7 +64,7 @@ fun MenuRoute(navigateToPlayer: (quizUri: String) -> Unit) {
         Text(text = "Пройти опрос")
       }
 
-      Button(onClick = { /*TODO*/ }) {
+      Button(onClick = navigateToEditor) {
         Text(text = "Создать опрос")
       }
     }

@@ -19,15 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.domain.model.Answer
-import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
 import com.kartollika.quizzer.player.QuestionState
+import com.kartollika.quizzer.player.vo.PossibleAnswerVO.SingleChoice
 
 @Composable
-fun SingleChoiceQuestion(
+internal fun SingleChoiceQuestion(
   questionState: QuestionState,
   possibleAnswer: SingleChoice,
   answer: Answer.SingleChoice?,
-  onAnswerSelected: (String) -> Unit,
+  onAnswerSelected: (Int) -> Unit,
   modifier: Modifier,
 ) {
   val options = possibleAnswer.options
@@ -37,9 +37,10 @@ fun SingleChoiceQuestion(
   Column(modifier = modifier) {
     options.forEach { option ->
       val onClickHandle = {
-        onAnswerSelected(option)
+        onAnswerSelected(option.id)
       }
-      val optionSelected = option == selected
+
+      val optionSelected = option.id == selected
 
       val answerBorderColor = if (optionSelected) {
         MaterialTheme.colors.primary.copy(alpha = 0.5f)
@@ -48,7 +49,7 @@ fun SingleChoiceQuestion(
       }
       val answerBackgroundColor = when {
         questionState.checked -> {
-          if (possibleAnswer.correctOption == option) {
+          if (possibleAnswer.correctOption == option.id) {
             Color.Green.copy(alpha = 0.12f)
           } else if (optionSelected) {
             MaterialTheme.colors.error
@@ -86,7 +87,7 @@ fun SingleChoiceQuestion(
           horizontalArrangement = Arrangement.SpaceBetween
         ) {
           Text(
-            text = option
+            text = option.value
           )
 
           RadioButton(

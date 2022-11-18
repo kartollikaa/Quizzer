@@ -48,11 +48,12 @@ import com.kartollika.quizzer.player.QuizState.Result
 import kotlinx.coroutines.delay
 
 @Composable fun QuizPlayerRoute(
-  goBack: () -> Unit, viewModel: QuizPlayerViewModel = hiltViewModel()
+  onBack: () -> Unit,
+  viewModel: QuizPlayerViewModel = hiltViewModel()
 ) {
   QuizPlayer(
     viewModel = viewModel,
-    goBack = goBack,
+    goBack = onBack,
   )
 }
 
@@ -196,7 +197,8 @@ import kotlinx.coroutines.delay
   }
 }
 
-@Composable fun Question(
+@Composable
+internal fun Question(
   questionState: QuestionState,
   answer: Answer<*>?,
   onAnswer: (Answer<*>) -> Unit,
