@@ -15,6 +15,6 @@ class AndroidModule {
 
   @Provides
   @Singleton
-  fun providesLocationManager(@ApplicationContext context: Context) =
+  fun provideLocationManager(@ApplicationContext context: Context) =
     context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 }
