@@ -17,8 +17,10 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.editor.CircleBadge
+import com.kartollika.quizzer.editor.R.string
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.SingleChoice
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.SingleChoice.OptionVO
 
@@ -88,7 +90,7 @@ private fun SingleChoiceOption(
         } else {
           IconButton(onClick = onClick) {
             Icon(
-              imageVector = Icons.Default.Link, contentDescription = "Связать"
+              imageVector = Icons.Default.Link, contentDescription = stringResource(string.accessibility_questions_bind)
             )
           }
         }
@@ -96,7 +98,7 @@ private fun SingleChoiceOption(
     )
 
     IconButton(onClick = { deleteOption(option.id) }) {
-      Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+      Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(string.accessibility_delete_option))
     }
   }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.domain.model.Answer
 import com.kartollika.quizzer.domain.model.Location
+import com.kartollika.quizzer.player.R.string
 import com.kartollika.quizzer.player.questions.InputQuestion
 import com.kartollika.quizzer.player.questions.PlaceQuestion
 import com.kartollika.quizzer.player.questions.SingleChoiceQuestion
@@ -111,7 +112,7 @@ internal fun QuestionContent(
 }
 
 private fun openMapWithLocation(context: Context, location: Location) {
-  val uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.latitude, location.longitude)
+  val uri = String.format(Locale.ENGLISH, context.getString(string.geo_format_intent, location.latitude, location.longitude))
   val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
   context.startActivity(intent)
 }

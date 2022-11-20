@@ -13,8 +13,10 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kartollika.quizzer.R.string
 
 const val menuRoute = "menu"
 
@@ -48,7 +50,7 @@ fun MenuRoute(
     topBar = {
       TopAppBar(
         title = {
-          Text(text = "Quizzer")
+          Text(text = stringResource(string.quizzer_menu_title))
         }
       )
     },
@@ -61,11 +63,11 @@ fun MenuRoute(
       Button(onClick = {
         launcher.launch(arrayOf("*/*"))
       }) {
-        Text(text = "Пройти опрос")
+        Text(text = stringResource(string.play_quiz))
       }
 
       Button(onClick = navigateToEditor) {
-        Text(text = "Создать опрос")
+        Text(text = stringResource(string.create_quiz))
       }
     }
   }

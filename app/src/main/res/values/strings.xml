@@ -1,3 +1,9 @@
 <resources>
   <string name="app_name">Quizzer</string>
+  <string name="share_subject">Квест для тебя</string>
+  <string name="share_message">Я создал крутой квест для тебя! Проходи скорее</string>
+  <string name="share_title">Share File</string>
+  <string name="quizzer_menu_title">Quizzer</string>
+  <string name="play_quiz">Пройти опрос</string>
+  <string name="create_quiz">Создать опрос</string>
 </resources>

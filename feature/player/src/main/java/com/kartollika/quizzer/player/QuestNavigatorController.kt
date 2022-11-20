@@ -14,7 +14,9 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.kartollika.quizzer.player.R.string
 
 @Composable
 internal fun QuestNavigatorController(
@@ -30,7 +32,7 @@ internal fun QuestNavigatorController(
     verticalAlignment = Alignment.CenterVertically
   ) {
     TextButton(onClick = onPrevious) {
-      Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Назад")
+      Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(string.accessibility_back))
       Spacer(modifier = Modifier.width(8.dp))
       Text(text = "Назад")
     }
@@ -43,7 +45,7 @@ internal fun QuestNavigatorController(
         ) {
           Text(text = "Проверить")
           Spacer(modifier = Modifier.width(8.dp))
-          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Проверить")
+          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = stringResource(string.accessibility_check_answer))
         }
       }
 
@@ -51,7 +53,7 @@ internal fun QuestNavigatorController(
         TextButton(onClick = onDone) {
           Text(text = "Готово")
           Spacer(modifier = Modifier.width(8.dp))
-          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Готово")
+          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = stringResource(string.accessibility_done))
         }
       }
 
@@ -59,7 +61,7 @@ internal fun QuestNavigatorController(
         TextButton(onClick = onForward) {
           Text(text = "Вперед")
           Spacer(modifier = Modifier.width(8.dp))
-          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Вперед")
+          Icon(imageVector = Icons.Default.ArrowForward, contentDescription = stringResource(string.accessibility_forward))
         }
       }
     }

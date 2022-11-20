@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -40,6 +41,7 @@ import com.kartollika.quizzer.domain.model.Answer.Place.BeenHere.REJECTED
 import com.kartollika.quizzer.domain.model.Location
 import com.kartollika.quizzer.player.QuestionState
 import com.kartollika.quizzer.player.QuizPlayerViewModel
+import com.kartollika.quizzer.player.R.string
 import com.kartollika.quizzer.player.vo.PossibleAnswerVO.Place
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -78,7 +80,7 @@ internal fun PlaceQuestion(
 
   if (!locationEnabled) {
     Column(modifier = modifier) {
-      Text(text = "Для этого задания потребуется включить геолокацию и дать разрешения на гео")
+      Text(text = stringResource(string.geo_permissions_rationale))
 
       Row(
         modifier = Modifier.fillMaxWidth(),
@@ -96,35 +98,37 @@ internal fun PlaceQuestion(
               locationEnabled = true
             }
           }) {
-          Text(text = "Дать разрешения")
+          Text(text = stringResource(string.give_permissions))
         }
 
         Button(
           modifier = Modifier.weight(1f),
           onClick = { onAnswer(REJECTED) }) {
-          Text(text = "Отказатья")
+          Text(text = stringResource(string.reject_permissions))
         }
       }
     }
     return
   }
 
-  DisposableEffect(Unit) {
-    viewModel.startListenLocation()
+  if (answer?.beenHere == NOT_STATED || answer == null) {
+    DisposableEffect(Unit) {
+      viewModel.startListenLocation()
 
-    onDispose { viewModel.stopListenLocation() }
+      onDispose { viewModel.stopListenLocation() }
+    }
   }
 
   val location = possibleAnswer.location
   Column(modifier = modifier) {
-    Text(text = "Нужно прийти на локацию сюда!")
+    Text(text = stringResource(string.location_destination_point))
 
     Spacer(modifier = Modifier.height(16.dp))
 
     OutlinedButton(
       modifier = Modifier.fillMaxWidth(),
       onClick = { navigateToMap(location) }) {
-      Text(text = "Lat:${location.latitude} – Lon:${location.longitude}")
+      Text(text = stringResource(string.location_text, location.latitude.toString(), location.longitude.toString()))
     }
 
     val confirmLocationButtonColors = ButtonDefaults.buttonColors(
@@ -137,14 +141,14 @@ internal fun PlaceQuestion(
       modifier = Modifier
         .height(54.dp)
         .fillMaxWidth(),
-      enabled = answer?.isConfirmEnabled ?: false,
+      enabled = (answer?.isConfirmEnabled ?: false) && answer?.beenHere == NOT_STATED,
       onClick = {
         viewModel.stopListenLocation()
         onAnswer(BEEN)
       },
       colors = confirmLocationButtonColors
     ) {
-      Text(text = "Я здесь!")
+      Text(text = stringResource(string.im_here))
     }
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -154,9 +158,12 @@ internal fun PlaceQuestion(
         .height(54.dp)
         .fillMaxWidth(),
       onClick = { onAnswer(REJECTED) },
-      colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)
+      colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),
+      enabled = answer?.beenHere == NOT_STATED,
     ) {
-      Text(text = "Отказаться")
+      Text(
+        text = stringResource(id = string.reject_question)
+      )
     }
   }
 }

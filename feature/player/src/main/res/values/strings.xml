@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="accessibility_close">Close</string>
+  <string name="geo_permissions_rationale">Для этого задания потребуется включить геолокацию и дать разрешения на гео</string>
+  <string name="give_permissions">Дать разрешения</string>
+  <string name="reject_permissions">Отказаться</string>
+  <string name="reject_question">Отказаться</string>
+  <string name="location_destination_point">Нужно прийти на локацию сюда!</string>
+  <string name="im_here">Я здесь!</string>
+  <string name="location_text">Lat:%s – Lon:%s</string>
+  <string name="geo_format_intent">geo:%f,%f</string>
+  <string name="accessibility_back">Назад</string>
+  <string name="accessibility_check_answer">Проверить</string>
+  <string name="accessibility_done">Готово</string>
+  <string name="accessibility_forward">Вперед</string>
+</resources>

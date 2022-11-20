@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="accessibility_questions_bind">Связать</string>
+  <string name="accessibility_generate_quest">Generate quest</string>
+  <string name="accessibility_delete_question">Delete question</string>
+  <string name="accessibility_delete_option">Delete option</string>
+  <string name="accessibility_delete_slide">Delete slide</string>
+  <string name="accessibility_pick_photo">Pick photo</string>
+</resources>

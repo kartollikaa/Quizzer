@@ -46,9 +46,11 @@ import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kartollika.quizzer.editor.R.string
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable internal fun QuizEditor(
@@ -180,7 +182,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
     },
     onClick = { generateQuiz() },
     icon = {
-      Icon(imageVector = Icons.Default.Check, contentDescription = null)
+      Icon(imageVector = Icons.Default.Check, contentDescription = stringResource(string.accessibility_generate_quest))
     }
   )
 }
@@ -225,7 +227,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
         IconButton(onClick = { questionDelete(state.id) }) {
           Icon(
-            imageVector = Icons.Default.Delete, contentDescription = null, tint = Color.Red
+            imageVector = Icons.Default.Delete, contentDescription = stringResource(string.accessibility_delete_question), tint = Color.Red
           )
         }
       }

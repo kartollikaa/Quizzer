@@ -31,8 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.editor.QuestionState
+import com.kartollika.quizzer.editor.R.string
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
 
@@ -60,7 +62,7 @@ import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
           Text(text = "Слайд:")
 
           IconButton(onClick = { deleteSlide(state.id, slide.id) }) {
-            Icon(imageVector = Icons.Default.Remove, contentDescription = null)
+            Icon(imageVector = Icons.Default.Remove, contentDescription = stringResource(string.accessibility_delete_slide))
           }
         }
 
@@ -95,7 +97,7 @@ import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
               pickPhotoLauncher.launch("image/*")
             }) {
             Icon(
-              imageVector = Icons.Default.Add, contentDescription = null, tint = Color.White
+              imageVector = Icons.Default.Add, contentDescription = stringResource(string.accessibility_pick_photo), tint = Color.White
             )
           }
         }

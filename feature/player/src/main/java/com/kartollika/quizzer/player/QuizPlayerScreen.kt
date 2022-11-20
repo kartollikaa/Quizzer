@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +45,7 @@ import com.kartollika.quizzer.player.QuizState.Error
 import com.kartollika.quizzer.player.QuizState.Loading
 import com.kartollika.quizzer.player.QuizState.Questions
 import com.kartollika.quizzer.player.QuizState.Result
+import com.kartollika.quizzer.player.R.string
 import kotlinx.coroutines.delay
 
 @Composable fun QuizPlayerRoute(
@@ -177,7 +179,7 @@ import kotlinx.coroutines.delay
         ) {
           Icon(
             Icons.Filled.Close,
-            contentDescription = "Close",
+            contentDescription = stringResource(string.accessibility_close),
             tint = MaterialTheme.colors.onSurface
           )
         }

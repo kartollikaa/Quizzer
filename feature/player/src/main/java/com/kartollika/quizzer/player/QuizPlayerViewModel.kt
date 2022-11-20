@@ -71,7 +71,7 @@ class QuizPlayerViewModel @Inject constructor(
 
   fun startListenLocation() {
     val questions = uiState.value as Questions
-    var answer = questions.questionsState[questions.currentQuestionIndex].answer as? Place
+    var answer: Place? = questions.questionsState[questions.currentQuestionIndex].answer as? Place
     if (answer == null) {
       answer = Place()
       questions.questionsState[questions.currentQuestionIndex].answer = answer
@@ -93,7 +93,7 @@ class QuizPlayerViewModel @Inject constructor(
         }
 
         val isLocationsClose = requiredLocation.distanceTo(currentLocation) < DISTANCE_TO_BEEN_HERE
-        questions.questionsState[questions.currentQuestionIndex].answer = Place(isConfirmEnabled = isLocationsClose)
+        questions.questionsState[questions.currentQuestionIndex].answer = answer.copy(isConfirmEnabled = isLocationsClose)
       }
       .launchIn(viewModelScope)
   }

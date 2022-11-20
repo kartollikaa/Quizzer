@@ -22,6 +22,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kartollika.quizzer.R.string
 import com.kartollika.quizzer.navigation.QuizzerNavHost
 import com.kartollika.quizzer.player.navigation.navigateToQuizPlayer
 import com.kartollika.quizzer.ui.theme.QuizzerTheme
@@ -82,10 +83,10 @@ class MainActivity : ComponentActivity() {
       intentShareFile.putExtra(Intent.EXTRA_STREAM, uri)
       intentShareFile.putExtra(
         Intent.EXTRA_SUBJECT,
-        "Квест для тебя"
+        getString(string.share_subject)
       )
-      intentShareFile.putExtra(Intent.EXTRA_TEXT, "Я создал крутой квест для тебя! Проходи скорее")
-      startActivity(Intent.createChooser(intentShareFile, "Share File"))
+      intentShareFile.putExtra(Intent.EXTRA_TEXT, getString(string.share_message))
+      startActivity(Intent.createChooser(intentShareFile, getString(string.share_title)))
     }
   }
 }
