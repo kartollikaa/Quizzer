@@ -59,7 +59,7 @@ import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
 
       Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = SpaceBetween) {
-          Text(text = "Слайд:")
+          Text(text = stringResource(string.question_slides_item))
 
           IconButton(onClick = { deleteSlide(state.id, slide.id) }) {
             Icon(imageVector = Icons.Default.Remove, contentDescription = stringResource(string.accessibility_delete_slide))
@@ -72,7 +72,7 @@ import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
             slide.text = value
           },
           label = {
-            Text(text = "Описание слайда")
+            Text(text = stringResource(string.question_slides_description))
           })
 
         Row(
@@ -109,7 +109,7 @@ import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
         .fillMaxWidth()
         .align(CenterHorizontally), onClick = { onAddSlide(state.id) }
     ) {
-      Text(text = "Добавить слайд")
+      Text(text = stringResource(string.question_slides_add_slide))
     }
   }
 }

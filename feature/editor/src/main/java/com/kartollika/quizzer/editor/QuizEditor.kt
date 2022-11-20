@@ -79,7 +79,7 @@ import com.kartollika.quizzer.editor.R.string
   if (linking != null) {
     AlertDialog(
       onDismissRequest = { cancelLinking() },
-      title = { Text(text = "Куда ведет ответ?") },
+      title = { Text(text = stringResource(string.qustion_destination)) },
       text = {
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
           items(state.questions.filter { it.id > linking.questionId }) { question ->
@@ -90,7 +90,11 @@ import com.kartollika.quizzer.editor.R.string
               contentAlignment = CenterStart
             ) {
               Text(
-                text = "${question.id} – ${question.questionText}"
+                text = stringResource(
+                  id = string.qustion_destination_item,
+                  question.id.toString(),
+                  question.questionText.toString()
+                )
               )
             }
           }
@@ -105,7 +109,7 @@ import com.kartollika.quizzer.editor.R.string
       properties = DialogProperties(dismissOnClickOutside = false),
       onDismissRequest = goBack,
       title = {
-        Text(text = "Название квеста")
+        Text(text = stringResource(string.quiz_name))
       },
       text = {
         OutlinedTextField(
@@ -120,7 +124,7 @@ import com.kartollika.quizzer.editor.R.string
           enabled = state.quizTitle.isNotEmpty(),
           onClick = { state.showSetQuizTitleDialog = false }
         ) {
-          Text(text = "Создать")
+          Text(text = stringResource(string.create_quiz))
         }
       }
     )
@@ -178,11 +182,14 @@ import com.kartollika.quizzer.editor.R.string
   ExtendedFloatingActionButton(
     modifier = modifier.offset(y = offset),
     text = {
-      Text(text = "Готово")
+      Text(text = stringResource(string.generate_quiz))
     },
     onClick = { generateQuiz() },
     icon = {
-      Icon(imageVector = Icons.Default.Check, contentDescription = stringResource(string.accessibility_generate_quest))
+      Icon(
+        imageVector = Icons.Default.Check,
+        contentDescription = stringResource(string.accessibility_generate_quest)
+      )
     }
   )
 }
@@ -227,7 +234,9 @@ import com.kartollika.quizzer.editor.R.string
 
         IconButton(onClick = { questionDelete(state.id) }) {
           Icon(
-            imageVector = Icons.Default.Delete, contentDescription = stringResource(string.accessibility_delete_question), tint = Color.Red
+            imageVector = Icons.Default.Delete,
+            contentDescription = stringResource(string.accessibility_delete_question),
+            tint = Color.Red
           )
         }
       }
@@ -253,7 +262,7 @@ import com.kartollika.quizzer.editor.R.string
         onQuestionNameChanged.onQuestionNameChanged(state.id, value)
       },
       label = {
-        Text(text = "Название вопроса")
+        Text(text = stringResource(string.question_name))
       }
     )
     Spacer(modifier = Modifier.height(16.dp))

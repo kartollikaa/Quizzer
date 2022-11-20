@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="accessibility_questions_bind">Связать</string>
-  <string name="accessibility_generate_quest">Generate quest</string>
-  <string name="accessibility_delete_question">Delete question</string>
-  <string name="accessibility_delete_option">Delete option</string>
-  <string name="accessibility_delete_slide">Delete slide</string>
-  <string name="accessibility_pick_photo">Pick photo</string>
+  <string name="accessibility_generate_quest">Сгенерировать квест</string>
+  <string name="accessibility_delete_question">Удалить вопрос</string>
+  <string name="accessibility_delete_option">Удалить опцию</string>
+  <string name="accessibility_delete_slide">Удалить слайд</string>
+  <string name="accessibility_pick_photo">Выбрать фото</string>
+  <string name="qustion_destination">Куда ведет ответ?</string>
+  <string name="qustion_destination_item">%s – %s</string>
+  <string name="quiz_name">Название квеста</string>
+  <string name="create_quiz">Создать</string>
+  <string name="generate_quiz">Готово</string>
+  <string name="question_name">Название вопроса</string>
+  <string name="question_type_text">Поле ввода</string>
+  <string name="question_type_single_choice">Выбор</string>
+  <string name="question_type_slides">Слайды</string>
+  <string name="question_type_location">Локация</string>
+  <string name="question_input_correct_answer">Правильный ответ</string>
+  <string name="question_input_hint_1">Подсказка 1</string>
+  <string name="question_input_hint_2">Подсказка 2</string>
+  <string name="question_single_add_option">Добавить ответ</string>
+  <string name="question_slides_item">Слайд:</string>
+  <string name="question_slides_description">Описание слайда</string>
+  <string name="question_slides_add_slide">Добавить слайд</string>
+  <string name="quiz_editor_add_question">Добавить вопрос</string>
 </resources>

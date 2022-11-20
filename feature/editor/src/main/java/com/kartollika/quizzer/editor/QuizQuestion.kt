@@ -5,10 +5,12 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType.Location
+import com.kartollika.quizzer.editor.R.string
 import com.kartollika.quizzer.editor.questions.InputQuestion
 import com.kartollika.quizzer.editor.questions.PlaceQuestion
 import com.kartollika.quizzer.editor.questions.SingleChoiceQuestion
@@ -84,7 +86,7 @@ internal fun QuizQuestion(
     ) {
       val callbacks = LocalEditorCallbacks.current
       OutlinedButton(onClick = { callbacks.onQuestionTypeSelected(state.id, QuestionType.Input) }) {
-        Text(text = "Text input")
+        Text(text = stringResource(string.question_type_text))
       }
 
       OutlinedButton(onClick = {
@@ -93,7 +95,7 @@ internal fun QuizQuestion(
           QuestionType.SingleChoice
         )
       }) {
-        Text(text = "Single")
+        Text(text = stringResource(string.question_type_single_choice))
       }
 
       OutlinedButton(onClick = {
@@ -102,11 +104,11 @@ internal fun QuizQuestion(
           QuestionType.Slides
         )
       }) {
-        Text(text = "Slides")
+        Text(text = stringResource(string.question_type_slides))
       }
 
       OutlinedButton(onClick = { callbacks.onQuestionTypeSelected(state.id, Location) }) {
-        Text(text = "Location")
+        Text(text = stringResource(string.question_type_location))
       }
     }
   }

@@ -54,7 +54,7 @@ internal fun SingleChoiceQuestion(
         onOptionAdded(questionId)
       }
     ) {
-      Text(text = "Добавить ответ")
+      Text(text = stringResource(string.question_single_add_option))
     }
   }
 }

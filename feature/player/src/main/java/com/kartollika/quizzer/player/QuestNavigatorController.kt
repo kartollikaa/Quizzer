@@ -34,7 +34,7 @@ internal fun QuestNavigatorController(
     TextButton(onClick = onPrevious) {
       Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(string.accessibility_back))
       Spacer(modifier = Modifier.width(8.dp))
-      Text(text = "Назад")
+      Text(text = stringResource(string.quiz_back))
     }
 
     when {
@@ -43,7 +43,7 @@ internal fun QuestNavigatorController(
           onClick = checkAnswer,
           enabled = state.enableCheck
         ) {
-          Text(text = "Проверить")
+          Text(text = stringResource(string.quiz_check))
           Spacer(modifier = Modifier.width(8.dp))
           Icon(imageVector = Icons.Default.ArrowForward, contentDescription = stringResource(string.accessibility_check_answer))
         }
@@ -51,7 +51,7 @@ internal fun QuestNavigatorController(
 
       state.showDone -> {
         TextButton(onClick = onDone) {
-          Text(text = "Готово")
+          Text(text = stringResource(string.quiz_done))
           Spacer(modifier = Modifier.width(8.dp))
           Icon(imageVector = Icons.Default.ArrowForward, contentDescription = stringResource(string.accessibility_done))
         }
@@ -59,7 +59,7 @@ internal fun QuestNavigatorController(
 
       else -> {
         TextButton(onClick = onForward) {
-          Text(text = "Вперед")
+          Text(text = stringResource(string.quiz_forward))
           Spacer(modifier = Modifier.width(8.dp))
           Icon(imageVector = Icons.Default.ArrowForward, contentDescription = stringResource(string.accessibility_forward))
         }

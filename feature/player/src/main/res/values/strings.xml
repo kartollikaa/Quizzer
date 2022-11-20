@@ -13,4 +13,10 @@
   <string name="accessibility_check_answer">Проверить</string>
   <string name="accessibility_done">Готово</string>
   <string name="accessibility_forward">Вперед</string>
+  <string name="quiz_back">Назад</string>
+  <string name="quiz_check">Проверить</string>
+  <string name="quiz_done">Готово</string>
+  <string name="quiz_forward">Вперед</string>
+  <string name="quiz_results_title">Итоги теста %s</string>
+  <string name="quiz_results_description">Правильных ответов: %d/%d</string>
 </resources>

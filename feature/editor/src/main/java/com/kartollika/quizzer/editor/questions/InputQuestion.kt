@@ -7,7 +7,9 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.kartollika.quizzer.editor.R.string
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Input
 
 @Composable
@@ -23,7 +25,7 @@ internal fun InputQuestion(
       onValueChange = onPutAnswer,
       modifier = Modifier.fillMaxWidth(),
       label = {
-        Text(text = "Правильный ответ")
+        Text(text = stringResource(string.question_input_correct_answer))
       }
     )
 
@@ -32,7 +34,7 @@ internal fun InputQuestion(
       onValueChange = { onPutHint(it, 0) },
       modifier = Modifier.fillMaxWidth(),
       label = {
-        Text(text = "Подсказка 1")
+        Text(text = stringResource(string.question_input_hint_1))
       }
     )
 
@@ -41,7 +43,7 @@ internal fun InputQuestion(
       onValueChange = { onPutHint(it, 1) },
       modifier = Modifier.fillMaxWidth(),
       label = {
-        Text(text = "Подсказка 2")
+        Text(text = stringResource(string.question_input_hint_2))
       }
     )
   }

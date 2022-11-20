@@ -149,8 +149,14 @@ import kotlinx.coroutines.delay
           verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
-          Text(text = "Итоги теста ${state.quizTitle}")
-          Text(text = "Правильных ответов: ${state.quizResult.correctAnswers}/${state.quizResult.totalQuestions}")
+          Text(text = stringResource(id = string.quiz_results_title, state.quizTitle))
+          Text(
+            text = stringResource(
+              id = string.quiz_results_description,
+              state.quizResult.correctAnswers,
+              state.quizResult.totalQuestions
+            )
+          )
         }
       }
     }
