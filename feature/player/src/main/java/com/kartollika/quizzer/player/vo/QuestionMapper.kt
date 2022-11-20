@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory.Options
 import android.util.Base64
 import com.kartollika.quizzer.domain.model.PossibleAnswer
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
+import com.kartollika.quizzer.domain.model.PossibleAnswer.Place
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice.Option
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides
@@ -27,8 +28,13 @@ class QuestionMapper{
       is Input -> mapToInputVO(answer)
       is SingleChoice -> mapToSingleChoiceVO(answer)
       is Slides -> mapToSlidesVO(answer)
+      is Place -> mapToPlaceVO(answer)
       else -> error("Incompatible possible answer type")
     }
+  }
+
+  private fun mapToPlaceVO(answer: Place): PossibleAnswerVO.Place {
+    return PossibleAnswerVO.Place(answer.location)
   }
 
   private fun mapToInputVO(answer: Input) =

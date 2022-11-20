@@ -3,7 +3,10 @@ package com.kartollika.quizzer.data.repository
 import com.kartollika.quizzer.data.core.toInt
 import com.kartollika.quizzer.domain.datasource.QuizFileDataSource
 import com.kartollika.quizzer.domain.model.Answer
+import com.kartollika.quizzer.domain.model.Answer.Place
+import com.kartollika.quizzer.domain.model.Answer.Place.BeenHere.BEEN
 import com.kartollika.quizzer.domain.model.Answerable
+import com.kartollika.quizzer.domain.model.PossibleAnswer
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Input
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice
 import com.kartollika.quizzer.domain.model.Quiz
@@ -45,6 +48,11 @@ class CurrentQuizRepositoryImpl @Inject constructor(
           answer as Answer.SingleChoice
           correctAnswers += (answer.optionId == correctAnswer.correctOption).toInt()
         }
+        is PossibleAnswer.Place -> {
+          answer as Place
+          correctAnswers += (answer.beenHere == BEEN).toInt()
+        }
+
         else -> {}
       }
     }

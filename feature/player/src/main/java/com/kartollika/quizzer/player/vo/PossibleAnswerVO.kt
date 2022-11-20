@@ -1,6 +1,7 @@
 package com.kartollika.quizzer.player.vo
 
 import android.graphics.Bitmap
+import com.kartollika.quizzer.domain.model.Location
 
 sealed class PossibleAnswerVO {
   data class Slides(val slides: List<Slide>) : PossibleAnswerVO() {
@@ -23,4 +24,6 @@ sealed class PossibleAnswerVO {
   }
 
   data class Input(val hints: List<String>, val answer: String) : PossibleAnswerVO()
+
+  data class Place(val location: Location): PossibleAnswerVO()
 }

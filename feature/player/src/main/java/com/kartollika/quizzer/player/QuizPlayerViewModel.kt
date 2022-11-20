@@ -3,7 +3,10 @@ package com.kartollika.quizzer.player
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kartollika.quizzer.domain.datasource.LocationDataSource
+import com.kartollika.quizzer.domain.model.Answer.Place
 import com.kartollika.quizzer.domain.model.Answer.SingleChoice
+import com.kartollika.quizzer.domain.model.Location
 import com.kartollika.quizzer.domain.repository.CurrentQuizRepository
 import com.kartollika.quizzer.player.QuizState.Error
 import com.kartollika.quizzer.player.QuizState.Loading
@@ -13,6 +16,7 @@ import com.kartollika.quizzer.player.vo.PossibleAnswerVO
 import com.kartollika.quizzer.player.vo.QuestionMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -20,12 +24,14 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import android.location.Location as AndroidLocation
 
 @HiltViewModel
 class QuizPlayerViewModel @Inject constructor(
   savedStateHandle: SavedStateHandle,
   private val mapper: QuestionMapper,
-  private val currentQuizRepository: CurrentQuizRepository
+  private val currentQuizRepository: CurrentQuizRepository,
+  private val locationDataSource: LocationDataSource
 ) : ViewModel() {
 
   private val _uiState: MutableStateFlow<QuizState> = MutableStateFlow(Loading)
@@ -35,6 +41,8 @@ class QuizPlayerViewModel @Inject constructor(
 
   private var questionsHistory: MutableList<Int> = mutableListOf(0)
   private var historyIndex = 0
+
+  private var listenLocations: Job? = null
 
   init {
     currentQuizRepository.openQuiz(filePath)
@@ -57,6 +65,41 @@ class QuizPlayerViewModel @Inject constructor(
       }
       .flowOn(Dispatchers.IO)
       .launchIn(viewModelScope)
+  }
+
+  fun locationEnabled() = locationDataSource.locationEnabled()
+
+  fun startListenLocation() {
+    val questions = uiState.value as Questions
+    var answer = questions.questionsState[questions.currentQuestionIndex].answer as? Place
+    if (answer == null) {
+      answer = Place()
+      questions.questionsState[questions.currentQuestionIndex].answer = answer
+    }
+
+    val possibleAnswer =
+      questions.questionsState[questions.currentQuestionIndex].question.answer as PossibleAnswerVO.Place
+
+     val requiredLocation = AndroidLocation("RequiredLocation").apply {
+      latitude = possibleAnswer.location.latitude
+      longitude = possibleAnswer.location.latitude
+    }
+
+    listenLocations = locationDataSource.getLocations()
+      .onEach { location: Location ->
+        val currentLocation = AndroidLocation("MyLocation").apply {
+          latitude = location.latitude
+          longitude = location.latitude
+        }
+
+        val isLocationsClose = requiredLocation.distanceTo(currentLocation) < DISTANCE_TO_BEEN_HERE
+        questions.questionsState[questions.currentQuestionIndex].answer = Place(isConfirmEnabled = isLocationsClose)
+      }
+      .launchIn(viewModelScope)
+  }
+
+  fun stopListenLocation() {
+    listenLocations?.cancel()
   }
 
   fun showPrevious() {
@@ -97,5 +140,9 @@ class QuizPlayerViewModel @Inject constructor(
     val answers = questions.questionsState.mapNotNull { it.answer }
     val result = currentQuizRepository.getQuizResults(answers)
     _uiState.value = QuizState.Result(questions.quizTitle, result)
+  }
+
+  companion object {
+    private const val DISTANCE_TO_BEEN_HERE = 100.0
   }
 }

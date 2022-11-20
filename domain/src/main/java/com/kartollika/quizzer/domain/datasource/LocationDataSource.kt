@@ -4,5 +4,7 @@ import com.kartollika.quizzer.domain.model.Location
 import kotlinx.coroutines.flow.Flow
 
 interface LocationDataSource {
-  fun getLocation(): Flow<Location>
+  fun locationEnabled(): Boolean
+  fun getLocations(): Flow<Location>
+  fun getLastKnownLocation(): Flow<Location?>
 }

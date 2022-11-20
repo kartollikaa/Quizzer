@@ -12,20 +12,40 @@ import javax.inject.Inject
 
 class LocationDataSourceImpl @Inject constructor(
   private val locationManager: LocationManager
-): LocationDataSource {
+) : LocationDataSource {
+
+  override fun locationEnabled(): Boolean {
+    return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+  }
 
   @SuppressLint("MissingPermission")
   private val _locationUpdates = callbackFlow {
-    val callback = LocationListener { location -> trySend(Location(location.latitude, location.longitude)) }
+    val callback =
+      LocationListener { location -> trySend(Location(location.latitude, location.longitude)) }
 
-    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10f, callback)
+    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5f, callback)
 
     awaitClose {
       locationManager.removeUpdates(callback)
     }
   }
 
-  override fun getLocation(): Flow<Location> {
+  override fun getLocations(): Flow<Location> {
     return _locationUpdates
+  }
+
+  @SuppressLint("MissingPermission")
+  override fun getLastKnownLocation(): Flow<Location?> = callbackFlow {
+    val callback =
+      LocationListener { location ->
+        trySend(Location(location.latitude, location.longitude))
+      }
+
+    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10f, callback)
+
+    awaitClose {
+      locationManager.removeUpdates(callback)
+    }
   }
 }

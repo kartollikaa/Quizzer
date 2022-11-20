@@ -20,14 +20,14 @@ const val menuRoute = "menu"
 
 fun NavGraphBuilder.menuScreen(
   navigateToPlayer: (quizUri: String) -> Unit,
-  navigateToEditor: () -> Unit
+  navigateToEditor: () -> Unit,
 ) {
   composable(
     route = menuRoute
   ) {
     MenuRoute(
       navigateToPlayer = navigateToPlayer,
-      navigateToEditor = navigateToEditor
+      navigateToEditor = navigateToEditor,
     )
   }
 }
@@ -35,7 +35,7 @@ fun NavGraphBuilder.menuScreen(
 @Composable
 fun MenuRoute(
   navigateToPlayer: (quizUri: String) -> Unit,
-  navigateToEditor: () -> Unit
+  navigateToEditor: () -> Unit,
 ) {
   val launcher = rememberLauncherForActivityResult(
     OpenDocument()

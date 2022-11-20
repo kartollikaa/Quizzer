@@ -13,7 +13,6 @@ import java.io.File
   modifier: Modifier = Modifier,
   viewModel: QuizEditorViewModel = hiltViewModel(),
   shareFile: (File) -> Unit,
-  navigateToMap: (Int) -> Unit,
   goBack: () -> Unit
 ) {
   val state by viewModel.uiState.collectAsState()
@@ -31,13 +30,13 @@ import java.io.File
     onQuestionTypeSelected = viewModel::onQuestionTypeSelected,
     onAddSlide = viewModel::addSlide,
     onAddPictureOnSlide = viewModel::onAddPictureOnSlide,
-    onAddLocation = viewModel::addLocation,
-    onLocationSet = navigateToMap,
+    onLocationSet = viewModel::onLocationSet,
     onOptionDeleted = viewModel::deleteOption,
     startLinking = viewModel::startLinking,
     endLinking = viewModel::endLinking,
     cancelLinking = viewModel::cancelLinking,
-    deleteSlide = viewModel::deleteSlide
+    deleteSlide = viewModel::deleteSlide,
+    locationEnabled = viewModel::locationEnabled
   )
 
   CompositionLocalProvider(LocalEditorCallbacks provides quizEditorCallbacks) {
@@ -50,40 +49,3 @@ import java.io.File
     )
   }
 }
-/*
-
-@Preview(showBackground = true) @Composable fun QuizEditorScreenPreview() {
-  QuizEditor(
-    state = quizEditorPreviewState
-  )
-}
-*/
-
-/*
-private val quizEditorPreviewState = QuizEditorState(
-  quizTitle = "My Quiz"
-).apply {
-  questions = listOf(
-    QuestionState(id = 1).apply {
-      questionText = "Say my name"
-      answer = SingleChoice(listOf("Heisenberg", "Tuco", "Jessie"), correctOption = "Heisenberg")
-    },
-
-    QuestionState(id = 2).apply {
-      questionText = "Type my name"
-      answer = Input(
-        hints = listOf("Knock-knock"), answer = "Heisenberg"
-      )
-    },
-
-    QuestionState(id = 3).apply {
-      questionText = "Say my name"
-      answer = Slides(
-        slides = listOf(
-          Slide("First slide", listOf("1", "2")),
-          Slide("Second slide", listOf("1"))
-        )
-      )
-    }
-  )
-}*/

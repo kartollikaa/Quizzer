@@ -1,9 +1,11 @@
 package com.kartollika.quizzer.data.di
 
+import com.kartollika.quizzer.data.datasource.LocationDataSourceImpl
 import com.kartollika.quizzer.data.datasource.QuizFileDataSourceImpl
 import com.kartollika.quizzer.data.repository.CurrentQuizRepositoryImpl
 import com.kartollika.quizzer.data.repository.QuestDraftRepositoryImpl
 import com.kartollika.quizzer.data.repository.QuizEditorRepositoryImpl
+import com.kartollika.quizzer.domain.datasource.LocationDataSource
 import com.kartollika.quizzer.domain.datasource.QuizFileDataSource
 import com.kartollika.quizzer.domain.repository.CurrentQuizRepository
 import com.kartollika.quizzer.domain.repository.QuestDraftRepository
@@ -28,4 +30,7 @@ interface DataModule {
 
   @Binds
   fun bindsQuizEditorRepository(quizEditorRepositoryImpl: QuizEditorRepositoryImpl): QuizEditorRepository
+
+  @Binds
+  fun bindsLocationDataSource(locationDataSourceImpl: LocationDataSourceImpl): LocationDataSource
 }

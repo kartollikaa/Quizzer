@@ -1,6 +1,7 @@
 package com.kartollika.quizzer.editor.vo
 
 import android.util.Base64
+import com.kartollika.quizzer.domain.model.Location
 import com.kartollika.quizzer.domain.model.PossibleAnswer
 import com.kartollika.quizzer.domain.model.PossibleAnswer.SingleChoice.Option
 import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides.Slide
@@ -9,6 +10,7 @@ import com.kartollika.quizzer.domain.model.Quiz
 import com.kartollika.quizzer.editor.QuizEditorState
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Empty
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Input
+import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Place
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.SingleChoice
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides
 
@@ -56,6 +58,14 @@ class QuestionEditorMapper {
           }
         )
       }
+
+      is Place -> {
+        val location = location ?: error("Location is empty in $questionId")
+        PossibleAnswer.Place(
+          Location(location.latitude, location.longitude)
+        )
+      }
+
       Empty -> {
         error("Question not selected in $questionId")
       }

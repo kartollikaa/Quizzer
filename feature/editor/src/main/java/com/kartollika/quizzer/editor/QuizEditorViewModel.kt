@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kartollika.quizzer.domain.datasource.LocationDataSource
 import com.kartollika.quizzer.domain.repository.QuestDraftRepository
 import com.kartollika.quizzer.domain.repository.QuizEditorRepository
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -38,7 +40,8 @@ class QuizEditorViewModel @Inject constructor(
   private val quizDraftRepository: QuestDraftRepository,
   private val quizEditorRepository: QuizEditorRepository,
   private val questionMapper: QuestionEditorMapper,
-  private val bitmapDecoder: BitmapDecoder
+  private val bitmapDecoder: BitmapDecoder,
+  private val locationDataSource: LocationDataSource
 ) : ViewModel() {
 
   private val _uiState: MutableStateFlow<QuizEditorState> = MutableStateFlow(QuizEditorState())
@@ -116,8 +119,11 @@ class QuizEditorViewModel @Inject constructor(
     }
   }
 
-  fun addLocation(questionId: Int) {
-
+  fun onLocationSet(questionId: Int) {
+    viewModelScope.launch {
+      val location = locationDataSource.getLastKnownLocation().first()
+      getQuestionById(questionId)?.answer = PossibleAnswerVO.Place(location)
+    }
   }
 
   fun deleteOption(questionId: Int, optionId: Int) {
@@ -143,6 +149,8 @@ class QuizEditorViewModel @Inject constructor(
   fun startLinking(questionId: Int, optionId: Int) {
     uiState.value.isLinkingQuestions = LinkingStart(questionId, optionId)
   }
+
+  fun locationEnabled() = locationDataSource.locationEnabled()
 
   private fun getQuestionById(questionId: Int) =
     _uiState.value.questions.find { it.id == questionId }
@@ -171,11 +179,11 @@ data class EditorCallbacks(
   val onQuestionTypeSelected: (Int, QuestionType) -> Unit = { _, _ -> },
   val onAddSlide: (Int) -> Unit = {},
   val onAddPictureOnSlide: (Slide, Uri) -> Unit = { _, _ -> },
-  val onAddLocation: (Int) -> Unit = {},
   val onLocationSet: (Int) -> Unit = {},
   val onOptionDeleted: (Int, Int) -> Unit = { _, _ -> },
   val startLinking: (Int, Int) -> Unit = { _, _ -> },
   val endLinking: (Int) -> Unit = { },
   val cancelLinking: () -> Unit = {},
-  val deleteSlide: (Int, Int) -> Unit = { _, _ -> }
+  val deleteSlide: (Int, Int) -> Unit = { _, _ -> },
+  val locationEnabled: () -> Boolean = { false }
 )

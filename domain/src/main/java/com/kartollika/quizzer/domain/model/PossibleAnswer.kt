@@ -4,11 +4,9 @@ interface Answerable
 
 sealed class PossibleAnswer(val name: String) {
 
-  object Empty : PossibleAnswer("empty")
-
   data class Slides(
     val slides: List<Slide> = emptyList()
-  ) : PossibleAnswer("slides") {
+  ) : PossibleAnswer(SLIDES_TYPE) {
 
     data class Slide(
       val text: String = "",
@@ -19,7 +17,7 @@ sealed class PossibleAnswer(val name: String) {
   data class SingleChoice(
     val options: List<Option> = emptyList(),
     val correctOption: Int = 0
-  ) : PossibleAnswer("single_choice"), Answerable {
+  ) : PossibleAnswer(SINGLE_CHOICE_TYPE), Answerable {
     data class Option(
       val id: Int,
       val value: String = "",
@@ -30,7 +28,7 @@ sealed class PossibleAnswer(val name: String) {
   data class Input(
     val hints: List<String> = emptyList(),
     val answer: String = ""
-  ) : PossibleAnswer("input"),
+  ) : PossibleAnswer(INPUT_TYPE),
     Answerable {
 
     init {
@@ -40,5 +38,12 @@ sealed class PossibleAnswer(val name: String) {
 
   data class Place(
     val location: Location
-  ) : PossibleAnswer("place"), Answerable
+  ) : PossibleAnswer(PLACE_TYPE), Answerable
+
+  companion object {
+    const val SLIDES_TYPE = "slides"
+    const val SINGLE_CHOICE_TYPE = "single_choice"
+    const val INPUT_TYPE = "input"
+    const val PLACE_TYPE = "place"
+  }
 }

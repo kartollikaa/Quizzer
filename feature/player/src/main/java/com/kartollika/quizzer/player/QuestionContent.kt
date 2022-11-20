@@ -1,5 +1,8 @@
 package com.kartollika.quizzer.player
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,14 +17,19 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.kartollika.quizzer.domain.model.Answer
+import com.kartollika.quizzer.domain.model.Location
 import com.kartollika.quizzer.player.questions.InputQuestion
+import com.kartollika.quizzer.player.questions.PlaceQuestion
 import com.kartollika.quizzer.player.questions.SingleChoiceQuestion
 import com.kartollika.quizzer.player.questions.SlidesQuestion
 import com.kartollika.quizzer.player.vo.PossibleAnswerVO
 import com.kartollika.quizzer.player.vo.PossibleAnswerVO.Input
+import com.kartollika.quizzer.player.vo.PossibleAnswerVO.Place
 import com.kartollika.quizzer.player.vo.PossibleAnswerVO.Slides
+import java.util.Locale
 
 @Composable
 internal fun QuestionContent(
@@ -30,6 +38,8 @@ internal fun QuestionContent(
   onAnswer: (Answer<*>) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+  val context = LocalContext.current
+
   LazyColumn(
     modifier = modifier,
     contentPadding = PaddingValues(16.dp)
@@ -47,7 +57,14 @@ internal fun QuestionContent(
             questionState = questionState,
             possibleAnswer = possibleAnswer,
             answer = answer as Answer.SingleChoice?,
-            onAnswerSelected = { answer -> onAnswer(Answer.SingleChoice(answer, questionId = questionState.question.id)) },
+            onAnswerSelected = { answer ->
+              onAnswer(
+                Answer.SingleChoice(
+                  answer,
+                  questionId = questionState.question.id
+                )
+              )
+            },
             modifier = Modifier
           )
         }
@@ -56,7 +73,14 @@ internal fun QuestionContent(
             questionState = questionState,
             possibleAnswer = possibleAnswer,
             answer = answer as Answer.Input?,
-            onAnswerTyped = { answer -> onAnswer(Answer.Input(answer, questionId = questionState.question.id)) },
+            onAnswerTyped = { answer ->
+              onAnswer(
+                Answer.Input(
+                  answer,
+                  questionId = questionState.question.id
+                )
+              )
+            },
             modifier = Modifier
           )
         }
@@ -66,10 +90,30 @@ internal fun QuestionContent(
             modifier = Modifier.fillMaxSize()
           )
         }
-        else -> error("Incompatible possible answer type")
+        is Place -> {
+          PlaceQuestion(
+            state = questionState,
+            possibleAnswer = possibleAnswer,
+            modifier = Modifier.fillMaxSize(),
+            navigateToMap = { location ->
+              openMapWithLocation(context, location)
+            },
+            onAnswer = { answer ->
+              questionState.checked = true
+              onAnswer(Answer.Place(answer, questionId = questionState.question.id))
+            },
+            answer = answer as? Answer.Place
+          )
+        }
       }
     }
   }
+}
+
+private fun openMapWithLocation(context: Context, location: Location) {
+  val uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.latitude, location.longitude)
+  val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+  context.startActivity(intent)
 }
 
 @Composable

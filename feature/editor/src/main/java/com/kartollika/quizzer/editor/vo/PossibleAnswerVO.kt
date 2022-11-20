@@ -39,7 +39,7 @@ sealed class PossibleAnswerVO {
     var answer by mutableStateOf("")
   }
 
-  class Place: PossibleAnswerVO() {
-    var location: Location? by mutableStateOf(null)
+  class Place(location: Location? = null): PossibleAnswerVO() {
+    var location: Location? by mutableStateOf(location)
   }
 }

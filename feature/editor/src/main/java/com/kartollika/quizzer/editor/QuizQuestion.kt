@@ -30,6 +30,7 @@ internal fun QuizQuestion(
   val onOptionDeleted = LocalEditorCallbacks.current.onOptionDeleted
   val startLinking = LocalEditorCallbacks.current.startLinking
   val deleteSlide = LocalEditorCallbacks.current.deleteSlide
+  val locationEnabled = LocalEditorCallbacks.current.locationEnabled
 
   when (val answer = state.answer) {
     is SingleChoice -> {
@@ -67,7 +68,14 @@ internal fun QuizQuestion(
     }
 
     is Place -> {
-      PlaceQuestion(state.id, answer = answer, onLocationSet = { onLocationSet(state.id) })
+      PlaceQuestion(
+        questionId = state.id,
+        answer = answer,
+        onLocationSet = {
+          onLocationSet(state.id)
+        },
+        locationEnabled = locationEnabled
+      )
     }
 
     Empty -> FlowRow(
