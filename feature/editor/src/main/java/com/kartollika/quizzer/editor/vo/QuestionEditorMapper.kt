@@ -8,6 +8,14 @@ import com.kartollika.quizzer.domain.model.PossibleAnswer.Slides.Slide
 import com.kartollika.quizzer.domain.model.Question
 import com.kartollika.quizzer.domain.model.Quiz
 import com.kartollika.quizzer.editor.QuizEditorState
+import com.kartollika.quizzer.editor.R
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.ChoiceOptionEmptyException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.InputEmptyException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.LocationEmptyException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.NoSlidesException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.OptionNotSelectedException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.QuestionNotSelectedException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.SlideEmptyException
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Empty
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Input
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Place
@@ -25,52 +33,78 @@ class QuestionEditorMapper {
     )
   }
 
-  private fun answerToModel(questionId: Int, answer: PossibleAnswerVO): PossibleAnswer = with(answer) {
-    return when (this) {
-      is Input -> {
-        if (this.answer.isEmpty()) error("Input field is empty in $questionId")
-        PossibleAnswer.Input(
-          hints,
-          this.answer
-        )
-      }
-      is SingleChoice -> {
-        if (options.any { it.value.isEmpty() }) error("Choice option is empty in $questionId")
-        if (correctOption == -1) error("Correct option not selected in $questionId")
-        PossibleAnswer.SingleChoice(
-          options = options.map { Option(it.id, it.value, it.linkedQuestionId) },
-          correctOption = correctOption
-        )
-      }
-
-      is Slides -> {
-        if (slides.isEmpty()) error("No slides in $questionId")
-        if (slides.any { it.pictures.isEmpty() && it.text.isEmpty() }) error("Slide is empty in $questionId")
-
-        PossibleAnswer.Slides(
-          slides.map {
-            Slide(
-              text = it.text,
-              pictures = it.pictures.map { bitmap ->
-                Base64.encodeToString(bitmap.original, Base64.DEFAULT)
-              }
+  private fun answerToModel(questionId: Int, answer: PossibleAnswerVO): PossibleAnswer =
+    with(answer) {
+      return when (this) {
+        is Input -> {
+          if (this.answer.isEmpty()) throw InputEmptyException(
+            QuizInvalidMessage(
+              R.string.invalid_quiz_input_empty,
+              questionId
             )
-          }
-        )
-      }
+          )
+          PossibleAnswer.Input(
+            hints,
+            this.answer
+          )
+        }
+        is SingleChoice -> {
+          if (options.any { it.value.isEmpty() }) throw ChoiceOptionEmptyException(
+            QuizInvalidMessage(
+              R.string.invalid_quiz_single_choice_empty,
+              questionId
+            )
+          )
+          if (correctOption == -1) throw OptionNotSelectedException(
+            QuizInvalidMessage(
+              R.string.invalid_quiz_single_choice_no_correct_option,
+              questionId
+            )
+          )
+          PossibleAnswer.SingleChoice(
+            options = options.map { Option(it.id, it.value, it.linkedQuestionId) },
+            correctOption = correctOption
+          )
+        }
 
-      is Place -> {
-        val location = location ?: error("Location is empty in $questionId")
-        PossibleAnswer.Place(
-          Location(location.latitude, location.longitude)
-        )
-      }
+        is Slides -> {
+          if (slides.isEmpty()) throw NoSlidesException(
+            QuizInvalidMessage(
+              R.string.invalid_quiz_no_slides,
+              questionId
+            )
+          )
+          if (slides.any { it.pictures.isEmpty() && it.text.isEmpty() }) throw SlideEmptyException(
+            QuizInvalidMessage(
+              R.string.invalid_quiz_one_of_slides_empty, questionId
+            )
+          )
 
-      Empty -> {
-        error("Question not selected in $questionId")
-      }
+          PossibleAnswer.Slides(
+            slides.map {
+              Slide(
+                text = it.text,
+                pictures = it.pictures.map { bitmap ->
+                  Base64.encodeToString(bitmap.original, Base64.DEFAULT)
+                }
+              )
+            }
+          )
+        }
 
-      else -> error("Unknown answer type")
+        is Place -> {
+          val location = location ?: throw LocationEmptyException(
+            QuizInvalidMessage(
+              R.string.invalid_quiz_location_empty,
+              questionId
+            )
+          )
+          PossibleAnswer.Place(
+            Location(location.latitude, location.longitude)
+          )
+        }
+
+        Empty -> throw QuestionNotSelectedException(QuizInvalidMessage(R.string.invalid_quiz_no_question_selected, questionId))
+      }
     }
-  }
 }

@@ -14,10 +14,19 @@ import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType.SingleChoi
 import com.kartollika.quizzer.editor.QuizEditorViewModel.QuestionType.Slides
 import com.kartollika.quizzer.editor.bitmap.BitmapDecoder
 import com.kartollika.quizzer.editor.bitmap.BitmapDecoder.DecodeResult
+import com.kartollika.quizzer.editor.vo.InvalidQuizException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.ChoiceOptionEmptyException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.InputEmptyException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.LocationEmptyException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.NoSlidesException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.OptionNotSelectedException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.QuestionNotSelectedException
+import com.kartollika.quizzer.editor.vo.InvalidQuizException.SlideEmptyException
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.SingleChoice.OptionVO
 import com.kartollika.quizzer.editor.vo.PossibleAnswerVO.Slides.Slide
 import com.kartollika.quizzer.editor.vo.QuestionEditorMapper
+import com.kartollika.quizzer.editor.vo.QuizInvalidMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,7 +56,7 @@ class QuizEditorViewModel @Inject constructor(
   private val _uiState: MutableStateFlow<QuizEditorState> = MutableStateFlow(QuizEditorState())
   internal val uiState = _uiState.asStateFlow()
 
-  private val _toastMessage = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 1)
+  private val _toastMessage = MutableSharedFlow<QuizInvalidMessage>(replay = 0, extraBufferCapacity = 1)
   val toastMessage = _toastMessage.asSharedFlow()
 
   fun addNewQuestion() {
@@ -66,8 +75,17 @@ class QuizEditorViewModel @Inject constructor(
       .flowOn(Dispatchers.Default)
       .onEach { file -> _uiState.value.fileToShare = file }
       .flowOn(Dispatchers.IO)
-      .catch { exception -> exception.message?.let { message -> _toastMessage.tryEmit(message) } }
+      .catch { exception -> handleQuizInvalidException(exception) }
       .launchIn(viewModelScope)
+  }
+
+  private fun handleQuizInvalidException(exception: Throwable) {
+    val message = if (exception is InvalidQuizException) {
+      exception.invalidMessage
+    } else {
+      QuizInvalidMessage(R.string.invalid_quiz_unknown, -1)
+    }
+    _toastMessage.tryEmit(message)
   }
 
   fun onQuestionTypeSelected(questionId: Int, questionType: QuestionType) {

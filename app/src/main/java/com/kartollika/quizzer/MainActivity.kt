@@ -79,6 +79,11 @@ class MainActivity : ComponentActivity() {
     val intentShareFile = Intent(Intent.ACTION_SEND)
     val uri = FileProvider.getUriForFile(this, "$packageName.provider", file)
     if (file.exists()) {
+      grantUriPermission(
+        packageName,
+        uri,
+        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+      )
       intentShareFile.type = "application/pdf"
       intentShareFile.putExtra(Intent.EXTRA_STREAM, uri)
       intentShareFile.putExtra(

@@ -24,4 +24,12 @@
   <string name="question_slides_description">Описание слайда</string>
   <string name="question_slides_add_slide">Добавить слайд</string>
   <string name="quiz_editor_add_question">Добавить вопрос</string>
+  <string name="invalid_quiz_input_empty">Не введен ответ в вопросе %d</string>
+  <string name="invalid_quiz_single_choice_empty">Нет вариантов ответа в вопросе %d</string>
+  <string name="invalid_quiz_one_of_slides_empty">Какой-то из слайдов пустов в вопросе %d</string>
+  <string name="invalid_quiz_no_slides">Отсутствуют слайды в вопросе %d</string>
+  <string name="invalid_quiz_location_empty">Отсутствуют слайды в вопросе %d</string>
+  <string name="invalid_quiz_single_choice_no_correct_option">Не выбран правильный вариант в вопросе %d</string>
+  <string name="invalid_quiz_no_question_selected">Не выбран тип вопроса в вопросе %d</string>
+  <string name="invalid_quiz_unknown">Что-то не так. Попробуй еще раз</string>
 </resources>

@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kartollika.quizzer.editor.R.string
+import com.kartollika.quizzer.editor.vo.QuizInvalidMessage
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable internal fun QuizEditor(
@@ -71,8 +72,8 @@ import com.kartollika.quizzer.editor.R.string
   val context = LocalContext.current
   LaunchedEffect(Unit) {
     viewModel.toastMessage
-      .collect { message ->
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+      .collect { message: QuizInvalidMessage ->
+        Toast.makeText(context, context.getString(message.stringRes, message.questionId), Toast.LENGTH_SHORT).show()
       }
   }
 
